@@ -1,0 +1,26 @@
+Curl and libcurl 7.52.2
+
+ Public curl releases:         163
+ Command line options:         204
+ curl_easy_setopt() options:   243
+ Public functions in libcurl:  61
+ Contributors:                 1480
+
+This release includes the following bugfixes:
+
+ o
+
+This release includes the following known bugs:
+
+ o see docs/KNOWN_BUGS (https://curl.haxx.se/docs/knownbugs.html)
+
+This release would not have looked like this without help, code, reports and
+advice from friends like these:
+
+
+
+        Thanks! (and sorry if I forgot to mention someone)
+
+References to bug reports and discussions on issues:
+
+ [1] = https://curl.haxx.se/bug/?i=
