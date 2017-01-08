@@ -3,7 +3,7 @@
 
 #include<transport\ITransport.h>
 
-class sh_context
+class SH_Context
 {
 public:
 	sh_send send;

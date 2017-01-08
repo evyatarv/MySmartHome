@@ -14,8 +14,8 @@ public:
 	SH_Switch(const char* address, size_t address_len, const void* transport_data);
 	
 	// Inherited via ISwitch
-	virtual SH_STATUS on(sh_context* context) override;
-	virtual SH_STATUS off(sh_context* context) override;
+	virtual SH_STATUS on(SH_Context* context) override;
+	virtual SH_STATUS off(SH_Context* context) override;
 
 private:
 	const char* _address;

@@ -12,8 +12,8 @@ class ISH_Switch
 {
 public:
 
-	virtual SH_STATUS on(sh_context* context) = 0;
-	virtual SH_STATUS off(sh_context* context) = 0;
+	virtual SH_STATUS on(SH_Context* context) = 0;
+	virtual SH_STATUS off(SH_Context* context) = 0;
 };
 
 #endif
