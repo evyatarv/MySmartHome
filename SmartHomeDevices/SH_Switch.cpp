@@ -17,12 +17,12 @@ SH_Switch::SH_Switch(const char* address, size_t address_len, const void* transp
 	_transport_data = transport_data;
 }
 
-SH_STATUS SH_Switch::on(sh_context* context)
+SH_STATUS SH_Switch::on(SH_Context* context)
 {
 	return context->send(_address, _address_len, CMD_ON, sizeof(CMD_ON), _transport_data);
 }
 
-SH_STATUS SH_Switch::off(sh_context* context)
+SH_STATUS SH_Switch::off(SH_Context* context)
 {
 	return context->send(_address, _address_len, CMD_OFF, sizeof(CMD_OFF), _transport_data);
 }

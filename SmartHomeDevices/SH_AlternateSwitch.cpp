@@ -35,7 +35,7 @@ void SH_AlternateSwitch::initilize_alt_switch()
 	_current_off = _b;
 }
 
-SH_STATUS SH_AlternateSwitch::Switch(sh_context* context)
+SH_STATUS SH_AlternateSwitch::Switch(SH_Context* context)
 {
 	SH_Switch* tmp;
 	SH_STATUS sh_status = SH_EGENERIC;
