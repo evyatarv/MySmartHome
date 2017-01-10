@@ -47,7 +47,7 @@ SH_STATUS SH_AlternateSwitch::Switch(SH_Context* context)
 		if (sh_status != SH_SUCCESS)
 			break;
 
-		sh_status = _current_on->on(context);
+		sh_status = _current_off->on(context);
 		if (sh_status != SH_SUCCESS)
 			break;
 
