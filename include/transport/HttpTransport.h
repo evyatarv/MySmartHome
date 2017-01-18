@@ -25,7 +25,8 @@ SH_C_EXTERN SH_STATUS http_send_command
 	size_t addr_len, 
 	const char* command, 
 	size_t command_len, 
-	const void* auth
+	const void* auth,
+	size_t auth_len
 );
 
 #endif // HTTP_TRAMSPORT_H

@@ -11,7 +11,7 @@ class SH_Switch : ISH_Switch
 {
 public:
 	SH_Switch();
-	SH_Switch(const char* address, size_t address_len, const void* transport_data);
+	SH_Switch(const char* address, size_t address_len, const void* transport_data, size_t transport_data_len);
 	
 	// Inherited via ISwitch
 	virtual SH_STATUS on(SH_Context* context) override;
@@ -21,6 +21,7 @@ private:
 	const char* _address;
 	size_t _address_len;
 	const void* _transport_data;
+	size_t _transport_data_len;
 };
 
 #endif
