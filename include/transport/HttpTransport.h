@@ -19,7 +19,7 @@
  * auth			- http basic auth struct
  *				  NOTE: all string sizes are without counting '/0'
  */
-SH_C_EXTERN SH_STATUS http_send
+SH_C_EXTERN SH_STATUS http_send_command
 (
 	const char* addr, 
 	size_t addr_len, 

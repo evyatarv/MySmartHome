@@ -6,8 +6,8 @@
 class SH_Context
 {
 public:
-	sh_send send;
-	sh_recv recv;
+	sh_send_command send;
+	sh_recv_data recv;
 };
 
 #endif

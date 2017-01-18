@@ -67,7 +67,7 @@ int build_auth_relm(const char* user, size_t user_len, const char* password,
 	return index + 1; // include '/0'
 }
 
-SH_STATUS http_send(const char* addr, size_t addr_len, const char* command, size_t command_len, const void* auth)
+SH_STATUS http_send_command(const char* addr, size_t addr_len, const char* command, size_t command_len, const void* auth)
 {
 	CURL *curl;
 	CURLcode res;
