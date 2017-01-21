@@ -3,7 +3,7 @@
 
 #include <devices\switch\ISH_Switch.h>
 
-/*
+/**
  * This class represet one basic switch device that expose on/off
  * functionality
  */

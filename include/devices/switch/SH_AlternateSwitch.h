@@ -3,6 +3,12 @@
 
 #include <devices\switch\SH_Switch.h>
 
+/**
+ * This class represent alternate switch, any press on aternate will
+ * switch the state.
+ * 
+ * NOTE: This class cant reflect the real switch state. 
+ */
 class SH_AlternateSwitch : ISH_Switch
 {
 public:
