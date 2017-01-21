@@ -6,7 +6,7 @@
 #include <SmartHome_err_defs.h>
 
 /**
- * Inteface representing one switch
+ * Inteface representing switch
  */
 class ISH_Switch
 {
