@@ -14,7 +14,7 @@ public:
 
 	SH_STATUS Switch(SH_Context* context);
 
-	void initilize_alt_switch(SH_Switch* on, SH_Switch* off);
+	void init_alt_switch(SH_Switch* on, SH_Switch* off);
 
 private:
 	SH_Switch* _a;
@@ -22,7 +22,7 @@ private:
 	SH_Switch* _current_on;
 	SH_Switch* _current_off;
 
-	void initilize_alt_switch();
+	void init_alt_switch();
 
 
 };
