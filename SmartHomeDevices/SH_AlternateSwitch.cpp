@@ -35,6 +35,16 @@ void SH_AlternateSwitch::initAltSwitch()
 	_current_off = _b;
 }
 
+SH_STATUS SH_AlternateSwitch::on(SH_Context * context)
+{
+	return alternate(context);
+}
+
+SH_STATUS SH_AlternateSwitch::off(SH_Context * context)
+{
+	return alternate(context);
+}
+
 SH_STATUS SH_AlternateSwitch::alternate(SH_Context* context)
 {
 	SH_Switch* tmp;

@@ -34,3 +34,10 @@ void SH_Switch::initSwitch(SH_SWITCH_STATE state)
 {
 	_state = state;
 }
+
+SH_STATUS SH_Switch::alternate(SH_Context * context)
+{
+	if (_state == SH_SWITCH_STATE::OFF)
+		return on(context);
+	return off(context);
+}

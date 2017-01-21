@@ -3,7 +3,7 @@
 
 #include <devices\switch\SH_Switch.h>
 
-class SH_AlternateSwitch
+class SH_AlternateSwitch : ISH_Switch
 {
 public:
 
@@ -12,7 +12,10 @@ public:
 
 	SH_AlternateSwitch(SH_Switch* a, SH_Switch* b);
 
-	SH_STATUS alternate(SH_Context* context);
+	// Inherited via ISH_Switch
+	virtual SH_STATUS on(SH_Context* context) override;
+	virtual SH_STATUS off(SH_Context* context) override;
+	virtual SH_STATUS alternate(SH_Context* context) override;
 
 	void initAltSwitch(SH_Switch* on, SH_Switch* off);
 
@@ -23,8 +26,6 @@ private:
 	SH_Switch* _current_off;
 
 	void initAltSwitch();
-
-
 };
 
 #endif
