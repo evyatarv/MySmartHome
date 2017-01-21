@@ -9,6 +9,7 @@ SH_Switch::SH_Switch()
 	_address_len = 0;
 	_transport_data = nullptr;
 	_transport_data_len = 0;
+	_state = SH_SWITCH_STATE::OFF;
 }
 
 SH_Switch::SH_Switch(const char* address, size_t address_len, const void* transport_data, size_t transport_data_len)
@@ -27,4 +28,9 @@ SH_STATUS SH_Switch::on(SH_Context* context)
 SH_STATUS SH_Switch::off(SH_Context* context)
 {
 	return context->send(_address, _address_len, CMD_OFF, sizeof(CMD_OFF), _transport_data, _transport_data_len);
+}
+
+void SH_Switch::init_switch(SH_SWITCH_STATE state)
+{
+	_state = state;
 }
