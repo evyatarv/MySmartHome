@@ -13,7 +13,7 @@ class ISH_Switch
 public:
 	enum SH_SWITCH_STATE { ON, OFF };
 
-	virtual void init_switch(SH_SWITCH_STATE state) = 0;
+	virtual void initSwitch(SH_SWITCH_STATE state) = 0;
 	virtual SH_STATUS on(SH_Context* context) = 0;
 	virtual SH_STATUS off(SH_Context* context) = 0;
 };

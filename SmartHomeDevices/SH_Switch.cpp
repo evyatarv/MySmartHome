@@ -30,7 +30,7 @@ SH_STATUS SH_Switch::off(SH_Context* context)
 	return context->send(_address, _address_len, CMD_OFF, sizeof(CMD_OFF), _transport_data, _transport_data_len);
 }
 
-void SH_Switch::init_switch(SH_SWITCH_STATE state)
+void SH_Switch::initSwitch(SH_SWITCH_STATE state)
 {
 	_state = state;
 }

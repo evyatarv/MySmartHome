@@ -16,10 +16,10 @@ SH_AlternateSwitch::SH_AlternateSwitch(SH_Switch * a, SH_Switch* b)
 	_a = a; 
 	_b = b;
 
-	init_alt_switch();
+	initAltSwitch();
 }
 
-void SH_AlternateSwitch::init_alt_switch(SH_Switch * on, SH_Switch * off)
+void SH_AlternateSwitch::initAltSwitch(SH_Switch * on, SH_Switch * off)
 {
 	if (!on ||  !off || on == off || 
 		(on != _a && on != _b) || (off != _a && off != _b))
@@ -29,13 +29,13 @@ void SH_AlternateSwitch::init_alt_switch(SH_Switch * on, SH_Switch * off)
 	_current_off = off;
 }
 
-void SH_AlternateSwitch::init_alt_switch()
+void SH_AlternateSwitch::initAltSwitch()
 {
 	_current_on = _a;
 	_current_off = _b;
 }
 
-SH_STATUS SH_AlternateSwitch::Switch(SH_Context* context)
+SH_STATUS SH_AlternateSwitch::alternate(SH_Context* context)
 {
 	SH_Switch* tmp;
 	SH_STATUS sh_status = SH_EGENERIC;
@@ -60,7 +60,7 @@ SH_STATUS SH_AlternateSwitch::Switch(SH_Context* context)
 	while (false);
 
 	if (sh_status != SH_SUCCESS)
-		init_alt_switch();
+		initAltSwitch();
 
 	return sh_status;
 }
