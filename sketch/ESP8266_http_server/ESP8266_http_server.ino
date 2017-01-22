@@ -105,6 +105,31 @@ void wifi_connect(const char* ssid, const char* password)
   //TODO: open device as AP if fail do restart
 }
 
+void http_on()
+{
+  Serial.println("relay ON");
+  digitalWrite(SONOFF_LED, LOW);
+  digitalWrite(SONOFF_RELAY, HIGH);
+  delay(1000);
+}
+
+void http_off()
+{
+  Serial.println("relay OFF");
+  digitalWrite(SONOFF_LED, HIGH);
+  digitalWrite(SONOFF_RELAY, LOW);
+  delay(1000); 
+}
+
+int http_rest_config()
+{
+  Serial.println("CONFIG starts ...");
+  String arg = server.arg("ip"); 
+    
+  Serial.println(arg.length());
+  delay(1000);
+}
+
 void setup(void)
 {
   // preparing GPIOs
@@ -124,31 +149,29 @@ void setup(void)
       return server.requestAuthentication();
     server.send(200, "text/html", RETURN_WEB_PAGE);
   });
+  
   server.on("/on", [](){
     if(!server.authenticate(USER, USER_PASSWORD))
       return server.requestAuthentication();
+
+    http_on();
     server.send(200, "text/html", RETURN_WEB_PAGE);
-    digitalWrite(SONOFF_LED, LOW);
-    digitalWrite(SONOFF_RELAY, HIGH);
-    delay(1000);
   });
+  
   server.on("/off", [](){
     if(!server.authenticate(USER, USER_PASSWORD))
-      return server.requestAuthentication();     
+      return server.requestAuthentication(); 
+
+    http_off();
     server.send(200, "text/html", RETURN_WEB_PAGE);
-    digitalWrite(SONOFF_LED, HIGH);
-    digitalWrite(SONOFF_RELAY, LOW);
-    delay(1000); 
   });
+  
   server.on("/config", [](){
     if(!server.authenticate(USER, USER_PASSWORD))
-      return server.requestAuthentication(); 
-    Serial.println("config starts ...");
-    String arg = server.arg("ip"); 
-    
-    Serial.println(arg.length());
+      return server.requestAuthentication();
+
+    http_rest_config();
     server.send(200, "text/html", RETURN_WEB_PAGE);
-    delay(1000); 
   });
   
   server.begin();
