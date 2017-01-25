@@ -9,6 +9,8 @@ public:
 	sh_send_command send;
 	sh_send_configuration send_config;
 	sh_recv_data recv;
+	sh_timeout timeout;
+	
 };
 
 #endif

@@ -100,7 +100,8 @@ bool validate_params(const char* addr, size_t addr_len, const char* op, size_t o
 
 	return (status == SH_SUCCESS);
 }
-SH_STATUS http_send_command(const char* addr, size_t addr_len, const char* command, size_t command_len, const void* auth, size_t auth_len)
+
+SH_STATUS http_send_command(const char* addr, size_t addr_len, const char* command, size_t command_len, const void* auth, size_t auth_len, sh_timeout timeout)
 {
 	CURL *curl;
 	CURLcode res;
@@ -152,6 +153,10 @@ SH_STATUS http_send_command(const char* addr, size_t addr_len, const char* comma
 			// set request with basic auth
 			curl_easy_setopt(curl, CURLOPT_HTTPAUTH, (long)CURLAUTH_BASIC);
 
+			/* complete connection within timeout seconds (default is 0 = ~300sec) */
+			if (timeout > SH_NO_TIMEOUT)
+				curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, timeout);
+
 			//  set auth userpwd
 			curl_easy_setopt(curl, CURLOPT_USERPWD, auth_realm);
 
@@ -177,7 +182,7 @@ SH_STATUS http_send_command(const char* addr, size_t addr_len, const char* comma
 	return status;
 }
 
-SH_C_EXTERN SH_STATUS http_send_configuration(const char* addr, size_t addr_len, const void* config, size_t config_len, const void* auth, size_t auth_len)
+SH_C_EXTERN SH_STATUS http_send_configuration(const char* addr, size_t addr_len, const void* config, size_t config_len, const void* auth, size_t auth_len, sh_timeout timeout)
 {
 	CURL *curl;
 	CURLcode res;
@@ -231,6 +236,10 @@ SH_C_EXTERN SH_STATUS http_send_configuration(const char* addr, size_t addr_len,
 
 			// set request with basic auth
 			curl_easy_setopt(curl, CURLOPT_HTTPAUTH, (long)CURLAUTH_BASIC);
+
+			/* complete connection within timeout seconds (default is 0 = ~300sec) */
+			if (timeout > SH_NO_TIMEOUT)
+				curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, timeout);
 
 			//  set auth userpwd
 			curl_easy_setopt(curl, CURLOPT_USERPWD, auth_realm);
