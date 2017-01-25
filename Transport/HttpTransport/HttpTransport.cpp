@@ -59,7 +59,7 @@ int build_auth_relm(const char* user, size_t user_len, const char* password,
 		return -SH_EGENERIC;
 	index += 1;
 	
-	// copy password inro realm buffer
+	// copy password into realm buffer
 	if (strncpy_s(realm + index, realm_max_len - index, password, password_len))
 		return -SH_EGENERIC;
 	index += password_len;
@@ -67,6 +67,39 @@ int build_auth_relm(const char* user, size_t user_len, const char* password,
 	return index + 1; // include '/0'
 }
 
+bool validate_params(const char* addr, size_t addr_len, const char* op, size_t op_len, const void* auth, size_t auth_len)
+{
+	SH_STATUS status = SH_SUCCESS;
+	httpBasicAuth* basic_auth = (httpBasicAuth*)auth;
+
+	do
+	{
+		// check pointer
+		if (!addr || !op || !auth)
+		{
+			status = -SH_EINVALID_PARAM;
+			break;
+		}
+
+		// chek auth type
+		if (auth_len != sizeof(httpBasicAuth))
+		{
+			status = -SH_EINVALID_PARAM;
+			break;
+		}
+
+		// check sizes 
+		if (basic_auth->user_len > SH_MAX_USER_LENGTH || basic_auth->password_len > SH_MAX_PASSWORD_LENGTH ||
+			basic_auth->user_len == 0 || basic_auth->password_len == 0 ||
+			addr_len == 0 || op_len == 0)
+		{
+			status = -SH_EINVALID_PARAM;
+			break;
+		}
+	} while (false);
+
+	return (status == SH_SUCCESS);
+}
 SH_STATUS http_send_command(const char* addr, size_t addr_len, const char* command, size_t command_len, const void* auth, size_t auth_len)
 {
 	CURL *curl;
@@ -83,24 +116,8 @@ SH_STATUS http_send_command(const char* addr, size_t addr_len, const char* comma
 	{
 		do
 		{
-			// check pointer
-			if (!addr || !command || !auth)
-			{
-				status = -SH_EINVALID_PARAM;
-				break;
-			}
-
-			// chek auth type
-			if (auth_len != sizeof(httpBasicAuth))
-			{
-				status = -SH_EINVALID_PARAM;
-				break;
-			}
-
-			// check sizes 
-			if (basic_auth->user_len > SH_MAX_USER_LENGTH || basic_auth->password_len > SH_MAX_PASSWORD_LENGTH ||
-				basic_auth->user_len == 0 || basic_auth->password_len == 0 || 
-				addr_len == 0 || command_len == 0)
+			// check params
+			if (!validate_params(addr, addr_len, command, command_len, auth, auth_len))
 			{
 				status = -SH_EINVALID_PARAM;
 				break;
@@ -158,4 +175,77 @@ SH_STATUS http_send_command(const char* addr, size_t addr_len, const char* comma
 	}
 
 	return status;
+}
+
+SH_C_EXTERN SH_STATUS http_send_configuration(const char* addr, size_t addr_len, const void* config, size_t config_len, const void* auth, size_t auth_len)
+{
+	CURL *curl;
+	CURLcode res;
+	SH_STATUS status = SH_SUCCESS;
+	char auth_realm[SH_MAX_RELM_SIZE] = { 0 };
+	char url[SH_MAX_URL_LENGTH] = { 0 };
+	httpBasicAuth* basic_auth = (httpBasicAuth*)auth;
+
+	/* In windows, this will init the winsock stuff */
+	curl_global_init(CURL_GLOBAL_ALL);
+
+	// get curl handle
+	curl = curl_easy_init();
+
+	if (curl)
+	{
+		do
+		{
+			// check params
+			if (!validate_params(addr, addr_len, (const char*)config, config_len, auth, auth_len))
+			{
+				status = -SH_EINVALID_PARAM;
+				break;
+			}
+
+			// build auth relm
+			if (build_auth_relm(
+				basic_auth->user, basic_auth->user_len,
+				basic_auth->password, basic_auth->password_len,
+				auth_realm, SH_MAX_RELM_SIZE) <= 0)
+			{
+				status = -SH_EGENERIC;
+				break;
+			}
+
+			// build url
+			if (build_url(
+				addr, addr_len,
+				"config", strlen("config"),
+				url, SH_MAX_URL_LENGTH) <= 0)
+			{
+				status = -SH_EGENERIC;
+				break;
+			}
+
+			// set URL
+			curl_easy_setopt(curl, CURLOPT_URL, url);
+
+			/* Now specify the POST data */
+			curl_easy_setopt(curl, CURLOPT_POSTFIELDS, config);
+
+			// set request with basic auth
+			curl_easy_setopt(curl, CURLOPT_HTTPAUTH, (long)CURLAUTH_BASIC);
+
+			//  set auth userpwd
+			curl_easy_setopt(curl, CURLOPT_USERPWD, auth_realm);
+
+			/* Perform the request, res will get the return code */
+			res = curl_easy_perform(curl);
+			/* Check for errors */
+			if (res != CURLE_OK)
+				fprintf(stderr, "curl_easy_perform() failed: %s\n",
+					curl_easy_strerror(res));
+		} while (false);
+	}
+
+		/* always cleanup */
+		curl_easy_cleanup(curl);
+		curl_global_cleanup();
+		return 0;
 }

@@ -34,7 +34,9 @@ SH_C_EXTERN SH_STATUS http_send_configuration
 	const char* addr, 
 	size_t addr_len, 
 	const void* config, 
-	size_t config_len
+	size_t config_len,
+	const void* auth,
+	size_t auth_len
 );
 
 #endif // HTTP_TRAMSPORT_H
