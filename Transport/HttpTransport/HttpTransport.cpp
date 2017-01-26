@@ -101,95 +101,17 @@ bool validate_params(const char* addr, size_t addr_len, const char* op, size_t o
 	return (status == SH_SUCCESS);
 }
 
-SH_STATUS http_send_command(const char* addr, size_t addr_len, const char* command, size_t command_len, const void* auth, size_t auth_len, sh_timeout timeout)
+SH_STATUS http_preform
+(
+	const char* url, 
+	const void* data, 
+	const void* auth, 
+	sh_timeout timeout
+)
 {
 	CURL *curl;
 	CURLcode res;
 	SH_STATUS status = SH_SUCCESS;
-	char auth_realm[SH_MAX_RELM_SIZE] = { 0 };
-	char url[SH_MAX_URL_LENGTH] = { 0 };
-	httpBasicAuth* basic_auth = (httpBasicAuth*)auth; 
-
-	// get curl handle
-	curl = curl_easy_init();
-
-	if (curl)
-	{
-		do
-		{
-			// check params
-			if (!validate_params(addr, addr_len, command, command_len, auth, auth_len))
-			{
-				status = -SH_EINVALID_PARAM;
-				break;
-			}
-
-			// build auth relm
-			if (build_auth_relm(
-				basic_auth->user, basic_auth->user_len,
-				basic_auth->password, basic_auth->password_len,
-				auth_realm, SH_MAX_RELM_SIZE) <= 0)
-			{
-				status = -SH_EGENERIC;
-				break;
-			}
-
-			// build url
-			if (build_url(
-				addr, addr_len,
-				command, command_len,
-				url, SH_MAX_URL_LENGTH) <= 0)
-			{
-				status = -SH_EGENERIC;
-				break;
-			}
-
-			// set URL
-			curl_easy_setopt(curl, CURLOPT_URL, url);
-
-			// tell libcurl to follow redirection
-			curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-
-			// set request with basic auth
-			curl_easy_setopt(curl, CURLOPT_HTTPAUTH, (long)CURLAUTH_BASIC);
-
-			/* complete connection within timeout seconds (default is 0 = ~300sec) */
-			if (timeout > SH_NO_TIMEOUT)
-				curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, timeout);
-
-			//  set auth userpwd
-			curl_easy_setopt(curl, CURLOPT_USERPWD, auth_realm);
-
-			/* Perform the request, res will get the return code */
-			res = curl_easy_perform(curl);
-
-			/* Check for errors */
-			if (res != CURLE_OK)
-				fprintf(stderr, "curl_easy_perform() res = %d failed: %s\n",
-					res,
-					curl_easy_strerror(res));
-		} while (false);
-
-		/* always cleanup */
-		curl_easy_cleanup(curl);
-	}
-	else
-	{
-		fprintf(stderr, "curl_easy_init() failed\n");
-		status = -SH_EGENERIC;
-	}
-
-	return status;
-}
-
-SH_C_EXTERN SH_STATUS http_send_configuration(const char* addr, size_t addr_len, const void* config, size_t config_len, const void* auth, size_t auth_len, sh_timeout timeout)
-{
-	CURL *curl;
-	CURLcode res;
-	SH_STATUS status = SH_SUCCESS;
-	char auth_realm[SH_MAX_RELM_SIZE] = { 0 };
-	char url[SH_MAX_URL_LENGTH] = { 0 };
-	httpBasicAuth* basic_auth = (httpBasicAuth*)auth;
 
 	/* In windows, this will init the winsock stuff */
 	curl_global_init(CURL_GLOBAL_ALL);
@@ -199,62 +121,123 @@ SH_C_EXTERN SH_STATUS http_send_configuration(const char* addr, size_t addr_len,
 
 	if (curl)
 	{
-		do
+		/* set URL */
+		curl_easy_setopt(curl, CURLOPT_URL, url);
+
+		/* specify the POST data */
+		if (data)
+			curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
+
+		/* set request with basic auth */
+		curl_easy_setopt(curl, CURLOPT_HTTPAUTH, (long)CURLAUTH_BASIC);
+
+		/* complete connection within timeout seconds (default is 0 = ~300sec) */
+		if (timeout > SH_NO_TIMEOUT)
+			curl_easy_setopt(curl, CURLOPT_TIMEOUT, timeout);
+
+		/*  set auth userpwd */
+		curl_easy_setopt(curl, CURLOPT_USERPWD, auth);
+
+		/* Perform the request, res will get the return code */
+		res = curl_easy_perform(curl);
+		/* Check for errors */
+		if (res != CURLE_OK)
 		{
-			// check params
-			if (!validate_params(addr, addr_len, (const char*)config, config_len, auth, auth_len))
-			{
-				status = -SH_EINVALID_PARAM;
-				break;
-			}
+			fprintf(stderr, "curl_easy_perform() failed: %s\n",
+				curl_easy_strerror(res));
 
-			// build auth relm
-			if (build_auth_relm(
-				basic_auth->user, basic_auth->user_len,
-				basic_auth->password, basic_auth->password_len,
-				auth_realm, SH_MAX_RELM_SIZE) <= 0)
-			{
-				status = -SH_EGENERIC;
-				break;
-			}
-
-			// build url
-			if (build_url(
-				addr, addr_len,
-				"config", strlen("config"),
-				url, SH_MAX_URL_LENGTH) <= 0)
-			{
-				status = -SH_EGENERIC;
-				break;
-			}
-
-			// set URL
-			curl_easy_setopt(curl, CURLOPT_URL, url);
-
-			/* Now specify the POST data */
-			curl_easy_setopt(curl, CURLOPT_POSTFIELDS, config);
-
-			// set request with basic auth
-			curl_easy_setopt(curl, CURLOPT_HTTPAUTH, (long)CURLAUTH_BASIC);
-
-			/* complete connection within timeout seconds (default is 0 = ~300sec) */
-			if (timeout > SH_NO_TIMEOUT)
-				curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, timeout);
-
-			//  set auth userpwd
-			curl_easy_setopt(curl, CURLOPT_USERPWD, auth_realm);
-
-			/* Perform the request, res will get the return code */
-			res = curl_easy_perform(curl);
-			/* Check for errors */
-			if (res != CURLE_OK)
-				fprintf(stderr, "curl_easy_perform() failed: %s\n",
-					curl_easy_strerror(res));
-		} while (false);
+			status = SH_COMM_FAIL;
+		}
 	}
 
-		/* always cleanup */
-		curl_easy_cleanup(curl);
-		curl_global_cleanup();
-		return 0;
+	/* always cleanup */
+	curl_easy_cleanup(curl);
+	curl_global_cleanup();
+	return status;
+}
+
+SH_STATUS http_send_command(const char* addr, size_t addr_len, const char* command, size_t command_len, const void* auth, size_t auth_len, sh_timeout timeout)
+{
+	SH_STATUS status = SH_SUCCESS;
+	char auth_realm[SH_MAX_RELM_SIZE] = { 0 };
+	char url[SH_MAX_URL_LENGTH] = { 0 };
+	httpBasicAuth* basic_auth = (httpBasicAuth*)auth;
+
+	do
+	{
+		// check params
+		if (!validate_params(addr, addr_len, command, command_len, auth, auth_len))
+		{
+			status = -SH_EINVALID_PARAM;
+			break;
+		}
+
+		// build auth relm
+		if (build_auth_relm(
+			basic_auth->user, basic_auth->user_len,
+			basic_auth->password, basic_auth->password_len,
+			auth_realm, SH_MAX_RELM_SIZE) <= 0)
+		{
+			status = -SH_EGENERIC;
+			break;
+		}
+
+		// build url
+		if (build_url(
+			addr, addr_len,
+			command, command_len,
+			url, SH_MAX_URL_LENGTH) <= 0)
+		{
+			status = -SH_EGENERIC;
+			break;
+		}
+
+		status = http_preform(url, nullptr, auth_realm, timeout);
+
+	} while (false);
+
+	return status;
+}
+
+SH_C_EXTERN SH_STATUS http_send_configuration(const char* addr, size_t addr_len, const void* config, size_t config_len, const void* auth, size_t auth_len, sh_timeout timeout)
+{
+	SH_STATUS status = SH_EGENERIC;
+	char auth_realm[SH_MAX_RELM_SIZE] = { 0 };
+	char url[SH_MAX_URL_LENGTH] = { 0 };
+	httpBasicAuth* basic_auth = (httpBasicAuth*)auth;
+
+	do
+	{
+		// check params
+		if (!validate_params(addr, addr_len, (const char*)config, config_len, auth, auth_len))
+		{
+			status = -SH_EINVALID_PARAM;
+			break;
+		}
+
+		// build auth relm
+		if (build_auth_relm(
+			basic_auth->user, basic_auth->user_len,
+			basic_auth->password, basic_auth->password_len,
+			auth_realm, SH_MAX_RELM_SIZE) <= 0)
+		{
+			status = -SH_EGENERIC;
+			break;
+		}
+
+		// build url
+		if (build_url(
+			addr, addr_len,
+			"config", strlen("config"),
+			url, SH_MAX_URL_LENGTH) <= 0)
+		{
+			status = -SH_EGENERIC;
+			break;
+		}
+
+		status = http_preform(url, config, auth_realm, timeout);
+
+	} while (false);
+
+	return status;
 }

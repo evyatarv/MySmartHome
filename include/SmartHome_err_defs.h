@@ -9,5 +9,8 @@
 #define SH_EINVALID_PARAM	(0x2)
 
 
+#define SH_COMM_FAIL		(0x10)
+
+
 
 #endif // SMART_HOME_ERR_DEFS_H
