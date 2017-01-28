@@ -8,6 +8,9 @@
 
 MDNSResponder mdns;
 
+// device
+#define DEVICE_STATUS_ERR (100)
+
 // wifi connection
 #define WIFI_STATUS_PULL_INTERVAL (500)
 #define WIFI_CONNECTION_TIMEOUT   (120)
@@ -25,15 +28,15 @@ const char* WIFI_CONF[] = { "ssid", "password", "ip", "restaret" };
 #define SONOFF_INPUT      (14)
 
 // network credentials
-const char* DEFAULT_SSID_NAME = "******";
-const char* DEFAULT_SSID_PASSWORD = "******";
+const char* DEFAULT_SSID_NAME = "*****";
+const char* DEFAULT_SSID_PASSWORD = "*****";
 
 String CURRENT_SSID_NAME = DEFAULT_SSID_NAME;
 String CURRENT_SSID_PASSWORD = DEFAULT_SSID_PASSWORD;
 
 // http authentication 
-const char* USER = "******";
-const char* USER_PASSWORD = "******";
+const char* USER = "*****";
+const char* USER_PASSWORD = "*****";
 
 // return http page
 String RETURN_WEB_PAGE = "";
@@ -49,13 +52,23 @@ void led_tick()
   digitalWrite(SONOFF_LED, !state);     // set pin to the opposite state
 }
 
+void device_err()
+{
+  int counter = 0;
+  while (true)
+  {
+      if (!(++counter % 100000))
+        Serial.println("device err.. DO RESET");
+        
+      delay(DEVICE_STATUS_ERR);
+      led_tick();
+  }
+}
+
 bool wifi_try_connect(const char* ssid, const char* password)
 {
   int timeout_counter = 0; 
   
-  // Set ESP to stasion mode
-  WiFi.mode(WIFI_STA);
-  Serial.println("WIFI mode set to stasion.");
   Serial.print("Connecteing to: ");
   Serial.println(ssid);
 
@@ -91,9 +104,14 @@ bool wifi_try_connect(const char* ssid, const char* password)
 
 bool wifi_connect(const char* ssid, const char* password)
 {
+  // Set ESP to stasion mode
+  WiFi.mode(WIFI_STA);
+  Serial.println("WIFI mode set to stasion.");
+  
   if (wifi_try_connect(ssid, password))
     return true; 
 
+  return false;
   Serial.print("Fail to connect: ");
   Serial.println(ssid);
   Serial.println("Try connecting previous ssid");
@@ -108,7 +126,6 @@ bool wifi_connect(const char* ssid, const char* password)
   if (wifi_try_connect(DEFAULT_SSID_NAME, DEFAULT_SSID_PASSWORD))
     return true;
 
-  //TODO: open device as AP if fail do restart
   return false;
 }
 
@@ -128,7 +145,7 @@ void http_off()
   delay(1000); 
 }
 
-bool http_change_ssid()
+void http_change_ssid()
 {
   String ssid;
   String password;
@@ -142,7 +159,7 @@ bool http_change_ssid()
     Serial.println(ssid);
   }
   else
-    return true;
+    return;
 
   conf = server.arg(WIFI_CONF[PASSWORD]);
   if (conf.length())
@@ -152,7 +169,8 @@ bool http_change_ssid()
     Serial.println(password);
   }
 
-  return wifi_connect(ssid.c_str(), password.c_str());
+  if (!wifi_connect(ssid.c_str(), password.c_str()))
+    device_err();
 }
 
 int http_change_ip()
@@ -163,7 +181,6 @@ int http_change_ip()
   conf = server.arg(WIFI_CONF[IP]);
   if (conf.length())
   {
-    //TODO: handle IP config
     ip = conf;
     Serial.print("IP set to: ");
     Serial.println(ip);
@@ -200,7 +217,8 @@ void setup(void)
   Serial.begin(115200); 
   delay(5000);
 
-  wifi_connect(DEFAULT_SSID_NAME, DEFAULT_SSID_PASSWORD); 
+  if (!wifi_connect(DEFAULT_SSID_NAME, DEFAULT_SSID_PASSWORD))
+    device_err();
   
   server.on("/", [](){
     if(!server.authenticate(USER, USER_PASSWORD))
@@ -226,10 +244,8 @@ void setup(void)
   server.on("/config", [](){
     if(!server.authenticate(USER, USER_PASSWORD))
       return server.requestAuthentication();
-    
-    int status = http_config();
-    //TODO: handle return value (status) and return the corresponding http response code
-    
+      
+    http_config();
     server.send(200, "text/html", RETURN_WEB_PAGE);
   });
   
