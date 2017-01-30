@@ -9,7 +9,10 @@
 MDNSResponder mdns;
 
 // device
-#define DEVICE_STATUS_ERR (100)
+#define DEVICE_STATUS_ERR_DELAY_TIME  (100)
+#define DEVICE_ERR_MESSAGE_PULL_TIME  (1000)
+#define DEVICE_RESTART_TIMEOUT        (40)
+unsigned int restart_counter = 0;
 
 // wifi connection
 #define WIFI_STATUS_PULL_INTERVAL (500)
@@ -28,41 +31,59 @@ const char* WIFI_CONF[] = { "ssid", "password", "ip", "restaret" };
 #define SONOFF_INPUT      (14)
 
 // network credentials
-const char* DEFAULT_SSID_NAME = "*****";
-const char* DEFAULT_SSID_PASSWORD = "*****";
+const char* DEFAULT_SSID_NAME = "******";
+const char* DEFAULT_SSID_PASSWORD = "******";
 
 String CURRENT_SSID_NAME = DEFAULT_SSID_NAME;
 String CURRENT_SSID_PASSWORD = DEFAULT_SSID_PASSWORD;
 
 // http authentication 
-const char* USER = "*****";
-const char* USER_PASSWORD = "*****";
+const char* USER = "******";
+const char* USER_PASSWORD = "******";
 
 // return http page
 String RETURN_WEB_PAGE = "";
-
-Ticker ticker;
 
 ESP8266WebServer server(80);
 
 void led_tick()
 {
   //toggle state
-  int state = digitalRead(SONOFF_LED);  // get the current state of GPIO1 pin
-  digitalWrite(SONOFF_LED, !state);     // set pin to the opposite state
+  int state = digitalRead(SONOFF_LED);
+  digitalWrite(SONOFF_LED, !state);
 }
 
 void device_err()
 {
-  int counter = 0;
+  unsigned int counter = 0;
+  
+  int buttonState = LOW;
+  
   while (true)
   {
-      if (!(++counter % 100000))
-        Serial.println("device err.. DO RESET");
+    // Print err msg to serial every ~1 min
+    if (!(++counter % DEVICE_ERR_MESSAGE_PULL_TIME))
+      Serial.println("device err.. DO RESET");
         
-      delay(DEVICE_STATUS_ERR);
-      led_tick();
+    delay(DEVICE_STATUS_ERR_DELAY_TIME);
+    led_tick();
+
+    buttonState = digitalRead(SONOFF_BUTTON);
+    if (buttonState == LOW) 
+    {
+      if (!(++restart_counter % DEVICE_RESTART_TIMEOUT))
+      {
+        Serial.println("PREFORMING DEVICE RESET ...");
+        ESP.restart();
+        delay(1000);
+      }
+    }
   }
+}
+
+void btn_toggle_state()
+{
+  restart_counter = 0;
 }
 
 bool wifi_try_connect(const char* ssid, const char* password)
@@ -110,12 +131,11 @@ bool wifi_connect(const char* ssid, const char* password)
   
   if (wifi_try_connect(ssid, password))
     return true; 
-
-  return false;
+     
   Serial.print("Fail to connect: ");
   Serial.println(ssid);
   Serial.println("Try connecting previous ssid");
-  
+
   if (wifi_try_connect(CURRENT_SSID_NAME.c_str(), CURRENT_SSID_PASSWORD.c_str()))
     return true;
 
@@ -132,7 +152,6 @@ bool wifi_connect(const char* ssid, const char* password)
 void http_on()
 {
   Serial.println("relay ON");
-  digitalWrite(SONOFF_LED, LOW);
   digitalWrite(SONOFF_RELAY, HIGH);
   delay(1000);
 }
@@ -140,7 +159,6 @@ void http_on()
 void http_off()
 {
   Serial.println("relay OFF");
-  digitalWrite(SONOFF_LED, HIGH);
   digitalWrite(SONOFF_RELAY, LOW);
   delay(1000); 
 }
@@ -205,18 +223,33 @@ int http_config()
   return 0;
 }
 
-void setup(void)
+void prepare_gpios()
 {
-  // preparing GPIOs
+  // setup led
   pinMode(SONOFF_LED, OUTPUT);
   digitalWrite(SONOFF_LED, HIGH);
-  
+
+  // setup relay
   pinMode(SONOFF_RELAY, OUTPUT);
-  digitalWrite(SONOFF_RELAY, HIGH);
- 
+  digitalWrite(SONOFF_RELAY, LOW);
+
+  //setup button
+  pinMode(SONOFF_BUTTON, INPUT);
+  attachInterrupt(SONOFF_BUTTON, btn_toggle_state, CHANGE);
+}
+
+void prepare_serial()
+{
   Serial.begin(115200); 
   delay(5000);
+}
 
+void setup(void)
+{
+  prepare_gpios();
+
+  prepare_serial();
+  
   if (!wifi_connect(DEFAULT_SSID_NAME, DEFAULT_SSID_PASSWORD))
     device_err();
   
