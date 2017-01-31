@@ -3,7 +3,7 @@
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
-#include <Ticker.h>
+#include <IPAddress.h>
 #include <String.h>
 
 MDNSResponder mdns;
@@ -17,25 +17,29 @@ unsigned int restart_counter = 0;
 // wifi connection
 #define WIFI_STATUS_PULL_INTERVAL (500)
 #define WIFI_CONNECTION_TIMEOUT   (120)
+
+// configurations inputs sizes
 #define WIFI_MAX_SSID_LENGTH      (32)
 #define WIFI_MAX_PASSWORD_LENGTH  (32)
+#define WIFI_MAX_IPV4_LENGTH      (15)
+#define WIFI_MIN_IPV4_LENGTH      (7)
 
 // wifi configuration 
-enum WIFI_CONF_NUM{ SSID_NAME=0, PASSWORD, IP, RESTART, MAX_CONF_LEN };
-const char* WIFI_CONF[] = { "ssid", "password", "ip", "restaret" };
+enum WIFI_CONF_NUM{ SSID_NAME=0, PASSWORD, GATEWAY, MASK_IP, DEVICE_IP, MAX_CONF_LEN };
+const char* WIFI_CONF[] = { "ssid", "password", "gateway", "mask_ip", "device_ip" };
+const char* DEFAULT_SSID_NAME = "******";
+const char* DEFAULT_SSID_PASSWORD = "******";
+String CURRENT_SSID_NAME = DEFAULT_SSID_NAME;
+String CURRENT_SSID_PASSWORD = DEFAULT_SSID_PASSWORD;
+IPAddress DEFAULT_GATEWAY;
+IPAddress MASK_IP;
+IPAddress DEVICE_IP;
 
 // esp8266 gpios
 #define SONOFF_BUTTON     (0)
 #define SONOFF_RELAY      (12)
 #define SONOFF_LED        (13)
 #define SONOFF_INPUT      (14)
-
-// network credentials
-const char* DEFAULT_SSID_NAME = "******";
-const char* DEFAULT_SSID_PASSWORD = "******";
-
-String CURRENT_SSID_NAME = DEFAULT_SSID_NAME;
-String CURRENT_SSID_PASSWORD = DEFAULT_SSID_PASSWORD;
 
 // http authentication 
 const char* USER = "******";
@@ -191,24 +195,57 @@ void http_change_ssid()
     device_err();
 }
 
-int http_change_ip()
+bool http_change_ip()
 {
-  String ip;
   String conf;
   
-  conf = server.arg(WIFI_CONF[IP]);
-  if (conf.length())
+  do
   {
-    ip = conf;
-    Serial.print("IP set to: ");
-    Serial.println(ip);
-  }
+    conf = server.arg(WIFI_CONF[DEVICE_IP]);
+    if (conf.length() > WIFI_MIN_IPV4_LENGTH &&
+          conf.length() < WIFI_MAX_IPV4_LENGTH)
+    {
+      DEVICE_IP.fromString(conf);
+      Serial.print("DEVICE IP set to: ");
+      Serial.println(DEVICE_IP);
+    }
+    else
+      break;
+  
+    conf = server.arg(WIFI_CONF[MUSK_IP]);
+    if (conf.length() > WIFI_MIN_IPV4_LENGTH &&
+          conf.length() < WIFI_MAX_IPV4_LENGTH)
+    {
+      MASK_IP.fromString(conf);
+      Serial.print("MUSK IP set to: ");
+      Serial.println(MUSK_IP);
+    }
+    else
+      break;
+  
+    conf = server.arg(WIFI_CONF[GATEWAY]);
+    if (conf.length() > WIFI_MIN_IPV4_LENGTH &&
+          conf.length() < WIFI_MAX_IPV4_LENGTH)
+    {
+      DEVICE_IP.fromString(conf);
+      Serial.print("GATEWAY IP set to: ");
+      Serial.println(GATEWAY);
+    }
+    else
+      break;
 
-  return 0;
+  WiFi.config(DEVICE_IP, GATEWAY, MASK_IP);
+  return true;
+  }
+  while(false);
+    
+  return false;
 }
 
 int http_config()
 {
+  int status = 0;
+  
   Serial.println("CONFIG starts ...");
 
   if (server.args() == 0)
@@ -252,7 +289,8 @@ void setup(void)
   
   if (!wifi_connect(DEFAULT_SSID_NAME, DEFAULT_SSID_PASSWORD))
     device_err();
-  
+
+  //TODO: void on(const String &uri, HTTPMethod method, THandlerFunction fn);
   server.on("/", [](){
     if(!server.authenticate(USER, USER_PASSWORD))
       return server.requestAuthentication();
