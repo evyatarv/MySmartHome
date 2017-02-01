@@ -32,8 +32,8 @@ const char* DEFAULT_SSID_PASSWORD = "******";
 String CURRENT_SSID_NAME = DEFAULT_SSID_NAME;
 String CURRENT_SSID_PASSWORD = DEFAULT_SSID_PASSWORD;
 IPAddress DEFAULT_GATEWAY;
-IPAddress MASK_IP;
-IPAddress DEVICE_IP;
+IPAddress SUB_MASK_IP;
+IPAddress DEV_IP;
 
 // esp8266 gpios
 #define SONOFF_BUTTON     (0)
@@ -90,9 +90,12 @@ void btn_toggle_state()
   restart_counter = 0;
 }
 
-bool wifi_try_connect(const char* ssid, const char* password)
+bool wifi_try_connect(const char* ssid, const char* password, bool is_static_ip)
 {
   int timeout_counter = 0; 
+
+  WiFi.disconnect();
+  delay(2000);
   
   Serial.print("Connecteing to: ");
   Serial.println(ssid);
@@ -100,6 +103,10 @@ bool wifi_try_connect(const char* ssid, const char* password)
   // start wifi
   WiFi.begin(ssid, password); 
 
+  // set static ip or DHCP
+  if (is_static_ip)
+    WiFi.config(DEV_IP, DEFAULT_GATEWAY,SUB_MASK_IP); 
+  
   // Wait for connection
   while (WiFi.status() != WL_CONNECTED) {
     delay(WIFI_STATUS_PULL_INTERVAL);
@@ -115,11 +122,6 @@ bool wifi_try_connect(const char* ssid, const char* password)
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
 
-  // set device dns name
-  if (mdns.begin("esp8266", WiFi.localIP())) {
-    Serial.println("MDNS responder started");
-  }
-
   // save latest success connection
   CURRENT_SSID_NAME = ssid;
   CURRENT_SSID_PASSWORD = password;
@@ -133,21 +135,21 @@ bool wifi_connect(const char* ssid, const char* password)
   WiFi.mode(WIFI_STA);
   Serial.println("WIFI mode set to stasion.");
   
-  if (wifi_try_connect(ssid, password))
+  if (wifi_try_connect(ssid, password, false))
     return true; 
      
   Serial.print("Fail to connect: ");
   Serial.println(ssid);
   Serial.println("Try connecting previous ssid");
 
-  if (wifi_try_connect(CURRENT_SSID_NAME.c_str(), CURRENT_SSID_PASSWORD.c_str()))
+  if (wifi_try_connect(CURRENT_SSID_NAME.c_str(), CURRENT_SSID_PASSWORD.c_str(), false))
     return true;
 
   Serial.print("Fail to connect: ");
   Serial.println(ssid);
   Serial.println("Try connecting default ssid");
 
-  if (wifi_try_connect(DEFAULT_SSID_NAME, DEFAULT_SSID_PASSWORD))
+  if (wifi_try_connect(DEFAULT_SSID_NAME, DEFAULT_SSID_PASSWORD, false))
     return true;
 
   return false;
@@ -205,20 +207,20 @@ bool http_change_ip()
     if (conf.length() > WIFI_MIN_IPV4_LENGTH &&
           conf.length() < WIFI_MAX_IPV4_LENGTH)
     {
-      DEVICE_IP.fromString(conf);
+      DEV_IP.fromString(conf);
       Serial.print("DEVICE IP set to: ");
-      Serial.println(DEVICE_IP);
+      Serial.println(DEV_IP);
     }
     else
       break;
   
-    conf = server.arg(WIFI_CONF[MUSK_IP]);
+    conf = server.arg(WIFI_CONF[MASK_IP]);
     if (conf.length() > WIFI_MIN_IPV4_LENGTH &&
           conf.length() < WIFI_MAX_IPV4_LENGTH)
     {
-      MASK_IP.fromString(conf);
+      SUB_MASK_IP.fromString(conf);
       Serial.print("MUSK IP set to: ");
-      Serial.println(MUSK_IP);
+      Serial.println(SUB_MASK_IP);
     }
     else
       break;
@@ -227,15 +229,14 @@ bool http_change_ip()
     if (conf.length() > WIFI_MIN_IPV4_LENGTH &&
           conf.length() < WIFI_MAX_IPV4_LENGTH)
     {
-      DEVICE_IP.fromString(conf);
+      DEFAULT_GATEWAY.fromString(conf);
       Serial.print("GATEWAY IP set to: ");
-      Serial.println(GATEWAY);
+      Serial.println(DEFAULT_GATEWAY);
     }
     else
       break;
-
-  WiFi.config(DEVICE_IP, GATEWAY, MASK_IP);
-  return true;
+      
+    return wifi_try_connect(CURRENT_SSID_NAME.c_str(), CURRENT_SSID_PASSWORD.c_str(), true);
   }
   while(false);
     
@@ -290,21 +291,20 @@ void setup(void)
   if (!wifi_connect(DEFAULT_SSID_NAME, DEFAULT_SSID_PASSWORD))
     device_err();
 
-  //TODO: void on(const String &uri, HTTPMethod method, THandlerFunction fn);
-  server.on("/", [](){
+  server.on("/", HTTP_POST, [](){
     if(!server.authenticate(USER, USER_PASSWORD))
       return server.requestAuthentication();
     server.send(200, "text/html", RETURN_WEB_PAGE);
   });
   
-  server.on("/on", [](){
+  server.on("/on", HTTP_POST, [](){
     if(!server.authenticate(USER, USER_PASSWORD))
       return server.requestAuthentication();
     http_on();
     server.send(200, "text/html", RETURN_WEB_PAGE);
   });
   
-  server.on("/off", [](){
+  server.on("/off", HTTP_POST, [](){
     if(!server.authenticate(USER, USER_PASSWORD))
       return server.requestAuthentication(); 
 
@@ -312,7 +312,7 @@ void setup(void)
     server.send(200, "text/html", RETURN_WEB_PAGE);
   });
   
-  server.on("/config", [](){
+  server.on("/config", HTTP_POST, [](){
     if(!server.authenticate(USER, USER_PASSWORD))
       return server.requestAuthentication();
       
