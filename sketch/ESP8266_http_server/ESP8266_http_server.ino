@@ -57,6 +57,13 @@ void led_tick()
   digitalWrite(SONOFF_LED, !state);
 }
 
+void device_restart()
+{
+  Serial.println("PREFORMING DEVICE RESET ...");
+  ESP.restart();
+  delay(1000);
+}
+
 void device_err()
 {
   unsigned int counter = 0;
@@ -77,9 +84,7 @@ void device_err()
     {
       if (!(++restart_counter % DEVICE_RESTART_TIMEOUT))
       {
-        Serial.println("PREFORMING DEVICE RESET ...");
-        ESP.restart();
-        delay(1000);
+        device_restart();
       }
     }
   }
@@ -169,6 +174,11 @@ void http_off()
   delay(1000); 
 }
 
+void http_restart()
+{
+  device_restart();
+}
+
 void http_change_ssid()
 {
   String ssid;
@@ -243,24 +253,6 @@ bool http_change_ip()
   return false;
 }
 
-int http_config()
-{
-  int status = 0;
-  
-  Serial.println("CONFIG starts ...");
-
-  if (server.args() == 0)
-    return 0;
-
-  http_change_ssid();
-  
-  http_change_ip();
-  
-  delay(1000);
-
-  return 0;
-}
-
 void prepare_gpios()
 {
   // setup led
@@ -300,6 +292,7 @@ void setup(void)
   server.on("/on", HTTP_POST, [](){
     if(!server.authenticate(USER, USER_PASSWORD))
       return server.requestAuthentication();
+      
     http_on();
     server.send(200, "text/html", RETURN_WEB_PAGE);
   });
@@ -312,12 +305,34 @@ void setup(void)
     server.send(200, "text/html", RETURN_WEB_PAGE);
   });
   
-  server.on("/config", HTTP_POST, [](){
+  server.on("/set_network", HTTP_POST, [](){
     if(!server.authenticate(USER, USER_PASSWORD))
       return server.requestAuthentication();
       
-    http_config();
+    delay(1000);
     server.send(200, "text/html", RETURN_WEB_PAGE);
+    
+    http_change_ssid();    
+  });
+
+  server.on("/set_address", HTTP_POST, [](){
+    if(!server.authenticate(USER, USER_PASSWORD))
+      return server.requestAuthentication();
+      
+    delay(1000);
+    server.send(200, "text/html", RETURN_WEB_PAGE);
+    
+    http_change_ip();    
+  });
+
+  server.on("/restart", HTTP_POST, [](){
+    if(!server.authenticate(USER, USER_PASSWORD))
+      return server.requestAuthentication();
+      
+    delay(1000);
+    server.send(200, "text/html", RETURN_WEB_PAGE);
+    
+    http_restart();    
   });
   
   server.begin();

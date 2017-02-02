@@ -22,21 +22,12 @@
  */
 SH_C_EXTERN SH_STATUS http_send_command
 (
-	const char* addr, 
-	size_t addr_len, 
-	const char* command, 
-	size_t command_len, 
-	const void* auth,
-	size_t auth_len,
-	sh_timeout timeout
-);
-
-SH_C_EXTERN SH_STATUS http_send_configuration
-(
 	const char* addr,
 	size_t addr_len,
-	const void* config,
-	size_t config_len,
+	const char* command,
+	size_t command_len,
+	const void* command_data,
+	size_t command_data_len,
 	const void* auth,
 	size_t auth_len,
 	sh_timeout timeout

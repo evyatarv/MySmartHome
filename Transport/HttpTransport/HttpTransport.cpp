@@ -67,14 +67,15 @@ int build_auth_relm(const char* user, size_t user_len, const char* password,
 	return index + 1; // include '/0'
 }
 
-bool validate_params(const char* addr, size_t addr_len, const char* op, size_t op_len, const void* auth, size_t auth_len)
+bool validate_params(const char* addr, size_t addr_len, const char* op, size_t op_len, 
+						const void* command_data, size_t command_data_len, const void* auth, size_t auth_len)
 {
 	SH_STATUS status = SH_SUCCESS;
 	httpBasicAuth* basic_auth = (httpBasicAuth*)auth;
 
 	do
 	{
-		// check pointer
+		// check mendatory params
 		if (!addr || !op || !auth)
 		{
 			status = -SH_EINVALID_PARAM;
@@ -91,6 +92,7 @@ bool validate_params(const char* addr, size_t addr_len, const char* op, size_t o
 		// check sizes 
 		if (basic_auth->user_len > SH_MAX_USER_LENGTH || basic_auth->password_len > SH_MAX_PASSWORD_LENGTH ||
 			basic_auth->user_len == 0 || basic_auth->password_len == 0 ||
+			(command_data == nullptr && command_data_len != 0) || (command_data_len == 0 && command_data != nullptr) ||
 			addr_len == 0 || op_len == 0)
 		{
 			status = -SH_EINVALID_PARAM;
@@ -124,9 +126,11 @@ SH_STATUS http_preform
 		/* set URL */
 		curl_easy_setopt(curl, CURLOPT_URL, url);
 
+		/* set POST request */
+		//curl_easy_setopt(curl, CURLOPT_POST, true);
+
 		/* specify the POST data */
-		if (data)
-			curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
+		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data);
 
 		/* set request with basic auth */
 		curl_easy_setopt(curl, CURLOPT_HTTPAUTH, (long)CURLAUTH_BASIC);
@@ -156,7 +160,8 @@ SH_STATUS http_preform
 	return status;
 }
 
-SH_STATUS http_send_command(const char* addr, size_t addr_len, const char* command, size_t command_len, const void* auth, size_t auth_len, sh_timeout timeout)
+SH_STATUS http_send_command(const char* addr, size_t addr_len, const char* command, size_t command_len, 
+									const void* command_data, size_t command_data_len, const void* auth, size_t auth_len, sh_timeout timeout)
 {
 	SH_STATUS status = SH_SUCCESS;
 	char auth_realm[SH_MAX_RELM_SIZE] = { 0 };
@@ -166,7 +171,7 @@ SH_STATUS http_send_command(const char* addr, size_t addr_len, const char* comma
 	do
 	{
 		// check params
-		if (!validate_params(addr, addr_len, command, command_len, auth, auth_len))
+		if (!validate_params(addr, addr_len, command, command_len, command_data, command_data_len, auth, auth_len))
 		{
 			status = -SH_EINVALID_PARAM;
 			break;
@@ -192,50 +197,7 @@ SH_STATUS http_send_command(const char* addr, size_t addr_len, const char* comma
 			break;
 		}
 
-		status = http_preform(url, nullptr, auth_realm, timeout);
-
-	} while (false);
-
-	return status;
-}
-
-SH_C_EXTERN SH_STATUS http_send_configuration(const char* addr, size_t addr_len, const void* config, size_t config_len, const void* auth, size_t auth_len, sh_timeout timeout)
-{
-	SH_STATUS status = SH_EGENERIC;
-	char auth_realm[SH_MAX_RELM_SIZE] = { 0 };
-	char url[SH_MAX_URL_LENGTH] = { 0 };
-	httpBasicAuth* basic_auth = (httpBasicAuth*)auth;
-
-	do
-	{
-		// check params
-		if (!validate_params(addr, addr_len, (const char*)config, config_len, auth, auth_len))
-		{
-			status = -SH_EINVALID_PARAM;
-			break;
-		}
-
-		// build auth relm
-		if (build_auth_relm(
-			basic_auth->user, basic_auth->user_len,
-			basic_auth->password, basic_auth->password_len,
-			auth_realm, SH_MAX_RELM_SIZE) <= 0)
-		{
-			status = -SH_EGENERIC;
-			break;
-		}
-
-		// build url
-		if (build_url(
-			addr, addr_len,
-			"config", strlen("config"),
-			url, SH_MAX_URL_LENGTH) <= 0)
-		{
-			status = -SH_EGENERIC;
-			break;
-		}
-
-		status = http_preform(url, config, auth_realm, timeout);
+		status = http_preform(url, command_data, auth_realm, timeout);
 
 	} while (false);
 

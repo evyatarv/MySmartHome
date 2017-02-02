@@ -22,12 +22,12 @@ SH_Switch::SH_Switch(const char* address, size_t address_len, const void* transp
 
 SH_STATUS SH_Switch::on(SH_Context* context)
 {
-	return context->send(_address, _address_len, CMD_ON, sizeof(CMD_ON), _transport_data, _transport_data_len, context->timeout);
+	return context->send(_address, _address_len, CMD_ON, sizeof(CMD_ON), nullptr, 0, _transport_data, _transport_data_len, context->timeout);
 }
 
 SH_STATUS SH_Switch::off(SH_Context* context)
 {
-	return context->send(_address, _address_len, CMD_OFF, sizeof(CMD_OFF), _transport_data, _transport_data_len, context->timeout);
+	return context->send(_address, _address_len, CMD_OFF, sizeof(CMD_OFF), nullptr, 0, _transport_data, _transport_data_len, context->timeout);
 }
 
 void SH_Switch::initSwitch(SH_SWITCH_STATE state)
