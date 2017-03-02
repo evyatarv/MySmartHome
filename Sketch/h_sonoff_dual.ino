@@ -1,14 +1,8 @@
-void setup() {
-  // put your setup code here, to run once:
-  Serial.begin(19200);    //uart speed to relays micro-controller
-  //Serial.begin(115200);   //uart speed to console
-  //Serial.printf("Flash real id:   %08X\n", ESP.getFlashChipId()); //write to console (from CheckFlashConfig example)
-}
 
-void loop() {
-  // put your main code here, to run repeatedly:
-
-}
+//void init_device()
+//{
+//  Serial.begin(19200);    //uart speed to relays micro-controller
+//}
 
 
 enum activeRelay {

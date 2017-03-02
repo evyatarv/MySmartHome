@@ -5,48 +5,64 @@
 #define SONOFF_LED        (13)
 #define SONOFF_INPUT      (14)
 
-struct _device_api api;
 
-  
-void device_led_tick()
+device_api api;
+
+void sonoff_single_prepare_serial()
+{
+  Serial.begin(115200); 
+  delay(5000);
+}
+
+void sonoff_single_led_tick()
 {
   //toggle state
   int state = digitalRead(SONOFF_LED);
   digitalWrite(SONOFF_LED, !state);
 }
 
-void device_relay_on()
+void sonoff_single_relay(int cmd)
 {
-  Serial.println("relay ON");
-  digitalWrite(SONOFF_RELAY, HIGH);
+  switch(cmd)
+  {
+    case relay_on:
+    case all_relays_on:
+    {
+        Serial.println("relay ON");
+        digitalWrite(SONOFF_RELAY, HIGH);
+        digitalWrite(SONOFF_LED, LOW);
+    }break;
+
+    case relay_off:
+    case all_relays_off:
+    {
+      Serial.println("relay OFF");
+      digitalWrite(SONOFF_RELAY, LOW);
+      digitalWrite(SONOFF_LED, HIGH);
+    }break;
+
+    default: {return;}
+  }
+}
+
+void sonoff_single_led_on()
+{
   digitalWrite(SONOFF_LED, LOW);
 }
 
-void device_relay_off()
-{
-  Serial.println("relay OFF");
-  digitalWrite(SONOFF_RELAY, LOW);
-  digitalWrite(SONOFF_LED, HIGH);
-}
-
-void device_led_on()
-{
-  digitalWrite(SONOFF_LED, LOW);
-}
-
-void device_led_off()
+void sonoff_single_led_off()
 {
   digitalWrite(SONOFF_LED, HIGH);
 }
 
-void device_restart()
+void sonoff_single_restart()
 {
   Serial.println("PREFORMING DEVICE RESET ...");
   ESP.restart();
   delay(1000);
 }
 
-void device_err()
+void sonoff_single_enter_err_mode()
 {
   unsigned int counter = 0;
   
@@ -59,25 +75,25 @@ void device_err()
       Serial.println("device err.. DO RESET");
         
     delay(DEVICE_STATUS_ERR_DELAY_TIME);
-    device_led_tick();
+    sonoff_single_led_tick();
 
     buttonState = digitalRead(SONOFF_BUTTON);
     if (buttonState == LOW) 
     {
       if (!(++restart_counter % DEVICE_RESTART_TIMEOUT))
       {
-        device_restart();
+        sonoff_single_restart();
       }
     }
   }
 }
 
-void btn_toggle_state()
+void sonoff_single_btn_toggle_state()
 {
   restart_counter = 0;
 }
 
-void prepare_gpios()
+void sonoff_single_prepare_gpios()
 {
   // setup led
   pinMode(SONOFF_LED, OUTPUT);
@@ -89,23 +105,28 @@ void prepare_gpios()
 
   //setup button
   pinMode(SONOFF_BUTTON, INPUT);
-  attachInterrupt(SONOFF_BUTTON, btn_toggle_state, CHANGE);
+  attachInterrupt(SONOFF_BUTTON, sonoff_single_btn_toggle_state, CHANGE);
 }
 
-void device_indicator()
+void sonoff_single_indicate()
 {
-  device_led_tick();
+  sonoff_single_led_tick();
 }
 
 void init_device()
 {
-  api.relay_on_arr[0] = device_relay_on; 
-  api.relay_off_arr[0] = device_relay_off; 
-  api.do_device_could_reset = device_restart;
-
-  set_web_service_device_api(&api);
+  sonoff_single_prepare_serial();
   
-  device_led_on();
+  device_init init = sonoff_single_prepare_gpios;
+  
+  api.relay_arr[0] = sonoff_single_relay; 
+  api.do_device_could_reset = sonoff_single_restart;
+  api.do_indicate = sonoff_single_indicate;
+  api.enter_err_mode = sonoff_single_enter_err_mode; 
+  
+  set_device_api(api);
+  
+  sonoff_single_led_on();
 }
 
 
