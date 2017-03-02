@@ -1,10 +1,3 @@
-  
-device_api *service_api = NULL; 
-
-int set_web_service_device_api(struct _device_api *api)
-{
-  service_api = api;
-}
 
 void set_network_configuration()
 {
@@ -31,7 +24,7 @@ void set_network_configuration()
   }
 
   if (!wifi_connect(ssid.c_str(), password.c_str(), false))
-    device_err();
+    dev_api->enter_err_mode();
 
   // save to flash
   int len = ssid.length();
@@ -115,14 +108,16 @@ void init_http_server()
       return http_server.requestAuthentication();
     http_server.send(200, "text/html", HTTP_RETURN_WEB_PAGE);
   });
+
+
   
   http_server.on("/realy_1_on", HTTP_POST, [](){
     if(!http_server.authenticate(HTTP_AUTH_USER, HTTP_AUTH_PASSWORD))
       return http_server.requestAuthentication();
 
-    if (service_api && service_api->relay_on_arr[0])
+    if (dev_api->relay_op) // TODO: add dev api NULL check
     {
-      service_api->relay_on_arr[0]();
+      dev_api->relay_op(first_relay, relay_on);
       delay(HTTP_RESPONSE_DELAY_TIME);
       http_server.send(200, "text/html", HTTP_RETURN_WEB_PAGE);
     }
@@ -135,9 +130,9 @@ void init_http_server()
     if(!http_server.authenticate(HTTP_AUTH_USER, HTTP_AUTH_PASSWORD))
       return http_server.requestAuthentication(); 
 
-  if (service_api && service_api->relay_off_arr[0])
+  if (dev_api->relay_op)// TODO: add dev api NULL check
     {
-      service_api->relay_off_arr[0]();
+      dev_api->relay_op(first_relay, relay_off);
       delay(HTTP_RESPONSE_DELAY_TIME);
       http_server.send(200, "text/html", HTTP_RETURN_WEB_PAGE);
     }
@@ -147,11 +142,45 @@ void init_http_server()
       
   });
 
+
+  http_server.on("/realy_2_on", HTTP_POST, [](){
+    if(!http_server.authenticate(HTTP_AUTH_USER, HTTP_AUTH_PASSWORD))
+      return http_server.requestAuthentication();
+
+    if (dev_api->relay_op) // TODO: add dev api NULL check
+    {
+      dev_api->relay_op(second_relay, relay_on);
+      delay(HTTP_RESPONSE_DELAY_TIME);
+      http_server.send(200, "text/html", HTTP_RETURN_WEB_PAGE);
+    }
+    else
+      //TODO: explore - not sure this is the right way to return error
+      http_server.send(404, "text/html", HTTP_RETURN_WEB_PAGE); 
+  });
+  
+  http_server.on("/relay_2_off", HTTP_POST, [](){
+    if(!http_server.authenticate(HTTP_AUTH_USER, HTTP_AUTH_PASSWORD))
+      return http_server.requestAuthentication(); 
+
+  if (dev_api->relay_op)// TODO: add dev api NULL check
+    {
+      dev_api->relay_op(second_relay, relay_off);
+      delay(HTTP_RESPONSE_DELAY_TIME);
+      http_server.send(200, "text/html", HTTP_RETURN_WEB_PAGE);
+    }
+    else
+      //TODO: explore - not sure this is the right way to return error
+      http_server.send(404, "text/html", HTTP_RETURN_WEB_PAGE);
+      
+  });
+  
+
+
   http_server.on("/restart", HTTP_POST, [](){
     if(!http_server.authenticate(HTTP_AUTH_USER, HTTP_AUTH_PASSWORD))
       return http_server.requestAuthentication();
       
-    if (!service_api && !service_api->do_device_could_reset)
+    if (!dev_api->do_device_could_reset) // TODO: add dev api NULL check
     {
       //TODO: explore - not sure this is the right way to return error
       http_server.send(404, "text/html", HTTP_RETURN_WEB_PAGE);
@@ -161,7 +190,7 @@ void init_http_server()
     http_server.send(200, "text/html", HTTP_RETURN_WEB_PAGE);
     
     delay(HTTP_RESPONSE_DELAY_TIME);
-    service_api->do_device_could_reset();
+    dev_api->do_device_could_reset();
         
   });
   

@@ -23,7 +23,7 @@ bool wifi_try_connect(const char* ssid, const char* password, bool set_static_ip
       return false;
 
     Serial.print(".");
-    device_indicator();
+    dev_api->do_indicate();
   }
 
   // print wifi connection data
