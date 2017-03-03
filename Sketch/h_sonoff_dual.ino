@@ -83,7 +83,7 @@ void init_device()
   
   Serial.println("INIT SONOFF DUAL");
   
-  device_init init = sonoff_dual_prepare_gpios;
+  api.init = sonoff_dual_prepare_gpios;
   
   api.relay_op = sonoff_dual_relay; 
   api.do_device_could_reset = sonoff_dual_restart;

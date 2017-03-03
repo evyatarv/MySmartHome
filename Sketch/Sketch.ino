@@ -10,7 +10,6 @@ ESP8266WebServer http_server(80);
 
 void setup(void)
 {
-  Serial.println("in setup");
   componentes_setup();
 }
  

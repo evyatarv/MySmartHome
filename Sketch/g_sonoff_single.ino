@@ -118,9 +118,11 @@ void init_device()
 {
   sonoff_single_prepare_serial();
 
-  sonoff_dual_prepare_gpios();
+  sonoff_single_prepare_gpios();
   
-  device_init init = sonoff_single_prepare_gpios;
+  Serial.println("INIT SONOFF SINGLE");
+  
+  api.init = sonoff_single_prepare_gpios;
   
   api.relay_op = sonoff_single_relay; 
   api.do_device_could_reset = sonoff_single_restart;
