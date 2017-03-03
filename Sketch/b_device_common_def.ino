@@ -20,8 +20,8 @@ unsigned int restart_counter = 0;
 
 enum WIFI_CONF_NUM{ SSID_NAME=0, PASSWORD, GATEWAY, MASK_IP, DEVICE_IP, MAX_CONF_LEN };
 const char* WIFI_CONF[] = { "ssid", "password", "gateway", "mask_ip", "device_ip" };
-const char* WIFI_DEFAULT_SSID_NAME = "******";
-const char* WIFI_DEFAULT_SSID_PASSWORD = "******";
+const char* WIFI_DEFAULT_SSID_NAME = "E&S-SMART_HOME";
+const char* WIFI_DEFAULT_SSID_PASSWORD = "P@ssw0rd";
 String WIFI_CURRENT_SSID_NAME = WIFI_DEFAULT_SSID_NAME;
 String WIFI_CURRENT_SSID_PASSWORD = WIFI_DEFAULT_SSID_PASSWORD;
 IPAddress DEFAULT_GATEWAY;
@@ -78,6 +78,7 @@ enum RelayIndex {
 void device_func_place_holder(){Serial.println("FUNC PLACE HOLDER :( ");}
 
 typedef void (*relay)(int index, int cmd);
+
 typedef void (*device_reset)();
 typedef void (*device_indicator)();
 typedef void (*device_err)();
@@ -114,8 +115,6 @@ void set_device_api(device_api const &api);
 // ============== SETUP ==============
 void componentes_setup()
 {
-  Serial.println("in componentes_setup");
-  
   bool set_static_ip = false; 
 
   init_eeprom();

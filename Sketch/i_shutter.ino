@@ -1,4 +1,5 @@
 
+<<<<<<< HEAD
 //shutter movment in sec (time)
 #define SHUTTER_SML_FULL_OPEN_CLOSE 18000
 #define SHUTTER_SML_CRACKS 2500
@@ -33,3 +34,5 @@ void shutterMove(bool upDown, int moveTime){
   delay(moveTime);
   shutterState += (moveTime * ((upDown)? 1:-1));
 }
+=======
+>>>>>>> 2625d562d2bc8e3ffa3fe42743278e56af33d850

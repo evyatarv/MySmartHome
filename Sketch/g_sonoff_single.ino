@@ -16,6 +16,12 @@ void sonoff_single_prepare_serial()
 
 void sonoff_single_led_tick()
 {
+  Serial.begin(115200); 
+  delay(5000);
+}
+
+void sonoff_single_led_tick()
+{
   //toggle state
   int state = digitalRead(SONOFF_SINGLE_LED);
   digitalWrite(SONOFF_SINGLE_LED, !state);
@@ -117,6 +123,7 @@ void sonoff_single_indicate()
 void init_device()
 {
   sonoff_single_prepare_serial();
+<<<<<<< HEAD
 
   sonoff_dual_prepare_gpios();
   
@@ -131,3 +138,15 @@ void init_device()
   
   sonoff_single_led_on();
 }*/
+  
+  device_init init = sonoff_single_prepare_gpios;
+  
+  api.relay_arr[0] = sonoff_single_relay; 
+  api.do_device_could_reset = sonoff_single_restart;
+  api.do_indicate = sonoff_single_indicate;
+  api.enter_err_mode = sonoff_single_enter_err_mode; 
+  
+  set_device_api(api);
+  
+  sonoff_single_led_on();
+}

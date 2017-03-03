@@ -12,7 +12,6 @@ bool connect_wifi_network(bool set_static_ip)
 
 void set_device_api(struct _device_api *api)
 {
-  Serial.println("in set_device_api");
   dev_api = api; 
 }
 
