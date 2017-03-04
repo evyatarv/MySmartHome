@@ -27,4 +27,13 @@ typedef struct _httpBasicAuth
 
 // ***************** HTTP TYPES - ENDS *****************
 
+typedef enum _sh_relay_index
+{
+	SH_FIRST_RELAY = 0,
+	SH_SECOND_RELAY,
+	SH_THIRD_RELAY,
+	SH_FORTH_RELAY,
+	SH_FIFTH_RELAY,
+	SH_MAX_RELAY
+}SH_RELAY_INDEX;
 #endif // SMART_HOME_TYPE_DEFS_H

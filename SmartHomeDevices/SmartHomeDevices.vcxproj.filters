@@ -18,15 +18,9 @@
     <ClCompile Include="SH_Switch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SH_AlternateSwitch.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\devices\switch\SH_Switch.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\devices\switch\SH_AlternateSwitch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

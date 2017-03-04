@@ -1,7 +1,8 @@
+#include <string>
 #include <devices\switch\SH_Switch.h>
 
-#define CMD_ON ("on")
-#define CMD_OFF ("off")
+const std::string CMD_REALY_OFF[SH_MAX_RELAY] = { "relay_1_off", "relay_2_off", "relay_3_off", "relay_3_off","relay_4_off" };
+const std::string CMD_REALY_ON[SH_MAX_RELAY] = { "relay_1_on", "relay_2_on", "relay_3_on", "relay_3_on", "relay_4_on" };
 
 SH_Switch::SH_Switch()
 {
@@ -20,14 +21,33 @@ SH_Switch::SH_Switch(const char* address, size_t address_len, const void* transp
 	_transport_data_len = transport_data_len;
 }
 
-SH_STATUS SH_Switch::on(SH_Context* context)
-{
-	return context->send(_address, _address_len, CMD_ON, sizeof(CMD_ON), nullptr, 0, _transport_data, _transport_data_len, context->timeout);
+SH_STATUS SH_Switch::on(SH_Context* context, SH_RELAY_INDEX relay_index)
+{	
+	if (relay_index > SH_MAX_RELAY)
+		throw new sh_not_support();
+
+	SH_STATUS status = SH_EGENERIC;
+
+	status = context->send(_address, _address_len, CMD_REALY_ON[relay_index].c_str(), CMD_REALY_ON[relay_index].length(), nullptr, 0, _transport_data, _transport_data_len, context->timeout);
+	if (status == SH_SUCCESS)
+		_state = SH_SWITCH_STATE::ON;
+
+	return status;
 }
 
-SH_STATUS SH_Switch::off(SH_Context* context)
+SH_STATUS SH_Switch::off(SH_Context* context, SH_RELAY_INDEX relay_index)
 {
-	return context->send(_address, _address_len, CMD_OFF, sizeof(CMD_OFF), nullptr, 0, _transport_data, _transport_data_len, context->timeout);
+	if (relay_index > SH_MAX_RELAY)
+		throw new sh_not_support();
+
+	SH_STATUS status = SH_EGENERIC;
+
+	status = context->send(_address, _address_len, CMD_REALY_OFF[relay_index].c_str(), CMD_REALY_OFF[relay_index].length(), nullptr, 0, _transport_data, _transport_data_len, context->timeout);
+	if (status == SH_SUCCESS)
+		_state = SH_SWITCH_STATE::OFF;
+
+	return status;
+
 }
 
 void SH_Switch::initSwitch(SH_SWITCH_STATE state)

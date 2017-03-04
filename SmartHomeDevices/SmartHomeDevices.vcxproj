@@ -119,11 +119,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="SH_AlternateSwitch.cpp" />
     <ClCompile Include="SH_Switch.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\include\devices\switch\SH_AlternateSwitch.h" />
     <ClInclude Include="..\include\devices\switch\SH_Switch.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

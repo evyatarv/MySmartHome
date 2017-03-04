@@ -13,8 +13,8 @@ class ISH_Switch
 public:
 	enum SH_SWITCH_STATE { ON, OFF };
 
-	virtual SH_STATUS on(SH_Context* context) = 0;
-	virtual SH_STATUS off(SH_Context* context) = 0;
+	virtual SH_STATUS on(SH_Context* context, SH_RELAY_INDEX relay_num = SH_FIRST_RELAY) = 0;
+	virtual SH_STATUS off(SH_Context* context, SH_RELAY_INDEX relay_num = SH_FIRST_RELAY) = 0;
 	virtual SH_STATUS alternate(SH_Context* context) = 0;
 };
 
