@@ -6,7 +6,7 @@
 #define SONOFF_SINGLE_INPUT      (14)
 
 
-device_api api;
+device_api g_sonoff_single_api;
 
 void sonoff_single_prepare_serial()
 {
@@ -122,14 +122,14 @@ void init_device()
   
   Serial.println("INIT SONOFF SINGLE");
   
-  api.init = sonoff_single_prepare_gpios;
+  g_sonoff_single_api.init = sonoff_single_prepare_gpios;
   
-  api.relay_op = sonoff_single_relay; 
-  api.do_device_could_reset = sonoff_single_restart;
-  api.do_indicate = sonoff_single_indicate;
-  api.enter_err_mode = sonoff_single_enter_err_mode; 
+  g_sonoff_single_api.relay_op = sonoff_single_relay; 
+  g_sonoff_single_api.do_device_could_reset = sonoff_single_restart;
+  g_sonoff_single_api.do_indicate = sonoff_single_indicate;
+  g_sonoff_single_api.enter_err_mode = sonoff_single_enter_err_mode; 
   
-  set_device_api(api);
+  set_device_api(&g_sonoff_single_api);
   
   sonoff_single_led_on();
 }*/

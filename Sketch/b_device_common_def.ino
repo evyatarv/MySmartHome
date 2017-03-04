@@ -3,7 +3,7 @@
 #define DEVICE_STATUS_ERR_DELAY_TIME  (100)
 #define DEVICE_ERR_MESSAGE_PULL_TIME  (1000)
 #define DEVICE_RESTART_TIMEOUT        (40)
-
+#define DEIVCE_DELAY_AFTER_SER_WRITE  (50)
 unsigned int restart_counter = 0;
 // ============= DEVICE ENDS =============
 
@@ -36,8 +36,8 @@ IPAddress DEV_IP;
 #define HTTP_MAX_PASSWORD_AUTH_LENGTH (32)
 #define HTTP_RESPONSE_DELAY_TIME      (20)
 
-const char* HTTP_AUTH_USER = "******";
-const char* HTTP_AUTH_PASSWORD = "******";
+const char* HTTP_AUTH_USER = "evyatar";
+const char* HTTP_AUTH_PASSWORD = "12345";
 String HTTP_RETURN_WEB_PAGE = "";
 // ============= HTTP SERVER ENDS =============
 
@@ -63,15 +63,14 @@ String HTTP_RETURN_WEB_PAGE = "";
 // ============== DEVICE API ==============
 enum relay_cmd
 {
-  relay_on,
   relay_off,
+  relay_on,
   all_relays_on,
   all_relays_off,
 };
 
 enum RelayIndex {
-  relay_none = 0,
-  first_relay,
+  first_relay = 0,
   second_relay
 };
 

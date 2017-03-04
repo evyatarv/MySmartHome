@@ -111,7 +111,7 @@ void init_http_server()
 
 
   
-  http_server.on("/realy_1_on", HTTP_POST, [](){
+  http_server.on("/relay_1_on", HTTP_POST, [](){
     if(!http_server.authenticate(HTTP_AUTH_USER, HTTP_AUTH_PASSWORD))
       return http_server.requestAuthentication();
 
@@ -143,7 +143,7 @@ void init_http_server()
   });
 
 
-  http_server.on("/realy_2_on", HTTP_POST, [](){
+  http_server.on("/relay_2_on", HTTP_POST, [](){
     if(!http_server.authenticate(HTTP_AUTH_USER, HTTP_AUTH_PASSWORD))
       return http_server.requestAuthentication();
 
@@ -217,6 +217,9 @@ void init_http_server()
     set_device_ip();
     
   });
+
+  http_server.begin();
+  Serial.println("HTTP server started");
 }
 
 
