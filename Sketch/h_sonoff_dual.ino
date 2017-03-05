@@ -67,6 +67,19 @@ void sonoff_dual_led_off()
   digitalWrite(SONOFF_SINGLE_LED, HIGH);
 }
 
+void sonoff_dual_led(int index, int cmd)
+{
+  if (index > 0) //have only one led
+    return;
+
+  if (cmd == led_on)
+    sonoff_dual_led_on();
+  else if (cmd == led_off)
+    sonoff_dual_led_off();
+  else
+    Serial.println("SONOFF DUAL INVALID COMMAND");
+}
+
 void sonoff_dual_prepare_gpios()
 {
   // setup led
@@ -102,9 +115,10 @@ void init_device()
   
   g_sonoff_dual_api.init = sonoff_dual_prepare_gpios;
   
-  g_sonoff_dual_api.relay_op = sonoff_dual_relay; 
+  g_sonoff_dual_api.relay = sonoff_dual_relay; 
   g_sonoff_dual_api.do_device_could_reset = sonoff_dual_restart;
   g_sonoff_dual_api.do_indicate = sonoff_dual_indicate;
+  g_sonoff_dual_api.led = sonoff_dual_led;
   
   set_device_api(&g_sonoff_dual_api);
   

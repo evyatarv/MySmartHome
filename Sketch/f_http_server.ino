@@ -115,9 +115,9 @@ void init_http_server()
     if(!http_server.authenticate(HTTP_AUTH_USER, HTTP_AUTH_PASSWORD))
       return http_server.requestAuthentication();
 
-    if (dev_api->relay_op) // TODO: add dev api NULL check
+    if (dev_api->relay) // TODO: add dev api NULL check
     {
-      dev_api->relay_op(first_relay, relay_on);
+      dev_api->relay(first_relay, relay_on);
       delay(HTTP_RESPONSE_DELAY_TIME);
       http_server.send(200, "text/html", HTTP_RETURN_WEB_PAGE);
     }
@@ -130,9 +130,9 @@ void init_http_server()
     if(!http_server.authenticate(HTTP_AUTH_USER, HTTP_AUTH_PASSWORD))
       return http_server.requestAuthentication(); 
 
-  if (dev_api->relay_op)// TODO: add dev api NULL check
+  if (dev_api->relay)// TODO: add dev api NULL check
     {
-      dev_api->relay_op(first_relay, relay_off);
+      dev_api->relay(first_relay, relay_off);
       delay(HTTP_RESPONSE_DELAY_TIME);
       http_server.send(200, "text/html", HTTP_RETURN_WEB_PAGE);
     }
@@ -147,9 +147,9 @@ void init_http_server()
     if(!http_server.authenticate(HTTP_AUTH_USER, HTTP_AUTH_PASSWORD))
       return http_server.requestAuthentication();
 
-    if (dev_api->relay_op) // TODO: add dev api NULL check
+    if (dev_api->relay) // TODO: add dev api NULL check
     {
-      dev_api->relay_op(second_relay, relay_on);
+      dev_api->relay(second_relay, relay_on);
       delay(HTTP_RESPONSE_DELAY_TIME);
       http_server.send(200, "text/html", HTTP_RETURN_WEB_PAGE);
     }
@@ -162,9 +162,9 @@ void init_http_server()
     if(!http_server.authenticate(HTTP_AUTH_USER, HTTP_AUTH_PASSWORD))
       return http_server.requestAuthentication(); 
 
-  if (dev_api->relay_op)// TODO: add dev api NULL check
+  if (dev_api->relay)// TODO: add dev api NULL check
     {
-      dev_api->relay_op(second_relay, relay_off);
+      dev_api->relay(second_relay, relay_off);
       delay(HTTP_RESPONSE_DELAY_TIME);
       http_server.send(200, "text/html", HTTP_RETURN_WEB_PAGE);
     }

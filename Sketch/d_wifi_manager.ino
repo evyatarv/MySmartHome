@@ -20,7 +20,11 @@ bool wifi_try_connect(const char* ssid, const char* password, bool set_static_ip
   while (WiFi.status() != WL_CONNECTED) {
     delay(WIFI_STATUS_PULL_INTERVAL);
     if (++timeout_counter == WIFI_CONNECTION_TIMEOUT)
+    {
+      if (dev_api && dev_api->led != NULL)
+        dev_api->led(first_led, led_off);
       return false;
+    }
 
     Serial.print(".");
     dev_api->do_indicate();
@@ -34,6 +38,9 @@ bool wifi_try_connect(const char* ssid, const char* password, bool set_static_ip
   // save latest success connection
   WIFI_CURRENT_SSID_NAME = ssid;
   WIFI_CURRENT_SSID_PASSWORD = password;
+
+  if (dev_api && dev_api->led != NULL)
+    dev_api->led(first_led, led_on);
   
   return true;
 }

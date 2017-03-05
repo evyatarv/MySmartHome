@@ -69,17 +69,31 @@ enum relay_cmd
   all_relays_off,
 };
 
-enum RelayIndex {
+enum relay_index {
   first_relay = 0,
   second_relay
 };
 
+enum led_cmd
+{
+  led_off,
+  led_on,
+  all_leds_on,
+  all_leds_off,
+};
+
+enum led_index {
+  first_led = 0,
+  second_led
+};
+
 void device_func_place_holder(){Serial.println("FUNC PLACE HOLDER :( ");}
 
-typedef void (*relay)(int index, int cmd);
+typedef void (*device_relay)(int index, int cmd);
 
 typedef void (*device_reset)();
 typedef void (*device_indicator)();
+typedef void (*device_led)(int index, int cmd);
 typedef void (*device_err)();
 typedef void (*device_init)();
 
@@ -87,10 +101,11 @@ typedef struct _device_api
 {
   device_init init = NULL;
   
-  relay relay_op = NULL;
+  device_relay relay = NULL;
+  device_led  led = NULL;
   device_reset do_device_could_reset = device_func_place_holder;
   device_indicator do_indicate = device_func_place_holder;
-  device_err enter_err_mode = device_func_place_holder; 
+  device_err enter_err_mode = device_func_place_holder;
 }device_api;
 
 device_api* dev_api;
