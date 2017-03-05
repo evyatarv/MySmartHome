@@ -109,13 +109,11 @@ void init_http_server()
     http_server.send(200, "text/html", HTTP_RETURN_WEB_PAGE);
   });
 
-
-  
   http_server.on("/relay_1_on", HTTP_POST, [](){
     if(!http_server.authenticate(HTTP_AUTH_USER, HTTP_AUTH_PASSWORD))
       return http_server.requestAuthentication();
 
-    if (dev_api->relay) // TODO: add dev api NULL check
+    if (dev_api && dev_api->relay)
     {
       dev_api->relay(first_relay, relay_on);
       delay(HTTP_RESPONSE_DELAY_TIME);
@@ -130,7 +128,7 @@ void init_http_server()
     if(!http_server.authenticate(HTTP_AUTH_USER, HTTP_AUTH_PASSWORD))
       return http_server.requestAuthentication(); 
 
-  if (dev_api->relay)// TODO: add dev api NULL check
+  if (dev_api && dev_api->relay)
     {
       dev_api->relay(first_relay, relay_off);
       delay(HTTP_RESPONSE_DELAY_TIME);
@@ -143,11 +141,12 @@ void init_http_server()
   });
 
 
+
   http_server.on("/relay_2_on", HTTP_POST, [](){
     if(!http_server.authenticate(HTTP_AUTH_USER, HTTP_AUTH_PASSWORD))
       return http_server.requestAuthentication();
 
-    if (dev_api->relay) // TODO: add dev api NULL check
+    if (dev_api && dev_api->relay)
     {
       dev_api->relay(second_relay, relay_on);
       delay(HTTP_RESPONSE_DELAY_TIME);
@@ -162,7 +161,7 @@ void init_http_server()
     if(!http_server.authenticate(HTTP_AUTH_USER, HTTP_AUTH_PASSWORD))
       return http_server.requestAuthentication(); 
 
-  if (dev_api->relay)// TODO: add dev api NULL check
+  if (dev_api && dev_api->relay)
     {
       dev_api->relay(second_relay, relay_off);
       delay(HTTP_RESPONSE_DELAY_TIME);
@@ -173,14 +172,14 @@ void init_http_server()
       http_server.send(404, "text/html", HTTP_RETURN_WEB_PAGE);
       
   });
+
+
   
-
-
   http_server.on("/restart", HTTP_POST, [](){
     if(!http_server.authenticate(HTTP_AUTH_USER, HTTP_AUTH_PASSWORD))
       return http_server.requestAuthentication();
       
-    if (!dev_api->do_device_could_reset) // TODO: add dev api NULL check
+    if (!dev_api && !dev_api->do_device_could_reset)
     {
       //TODO: explore - not sure this is the right way to return error
       http_server.send(404, "text/html", HTTP_RETURN_WEB_PAGE);
