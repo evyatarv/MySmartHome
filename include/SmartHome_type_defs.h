@@ -29,7 +29,7 @@ typedef struct _httpBasicAuth
 
 typedef enum _sh_relay_index
 {
-	SH_FIRST_RELAY = 0,
+	SH_FIRST_RELAY = 1,
 	SH_SECOND_RELAY,
 	SH_THIRD_RELAY,
 	SH_FORTH_RELAY,

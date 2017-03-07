@@ -1,6 +1,7 @@
 #ifndef SWITCH_H
 #define SWITCH_H
 
+#include <string>
 #include <SH_exception.h>
 #include <devices\switch\ISH_Switch.h>
 
@@ -27,6 +28,7 @@ private:
 	const void* _transport_data;
 	size_t _transport_data_len;
 	SH_SWITCH_STATE _state;
+	std::string build_switch_command(int relay_index, std::string cmd);
 };
 
 #endif

@@ -109,7 +109,7 @@ void init_http_server()
     http_server.send(200, "text/html", HTTP_RETURN_WEB_PAGE);
   });
 
-  http_server.on("/relay_1_on", HTTP_POST, [](){
+  http_server.on("/relay/1/on", HTTP_POST, [](){
     if(!http_server.authenticate(HTTP_AUTH_USER, HTTP_AUTH_PASSWORD))
       return http_server.requestAuthentication();
 
@@ -124,7 +124,7 @@ void init_http_server()
       http_server.send(404, "text/html", HTTP_RETURN_WEB_PAGE); 
   });
   
-  http_server.on("/relay_1_off", HTTP_POST, [](){
+  http_server.on("/relay/1/off", HTTP_POST, [](){
     if(!http_server.authenticate(HTTP_AUTH_USER, HTTP_AUTH_PASSWORD))
       return http_server.requestAuthentication(); 
 
@@ -142,7 +142,7 @@ void init_http_server()
 
 
 
-  http_server.on("/relay_2_on", HTTP_POST, [](){
+  http_server.on("/relay/2/on", HTTP_POST, [](){
     if(!http_server.authenticate(HTTP_AUTH_USER, HTTP_AUTH_PASSWORD))
       return http_server.requestAuthentication();
 
@@ -157,7 +157,7 @@ void init_http_server()
       http_server.send(404, "text/html", HTTP_RETURN_WEB_PAGE); 
   });
   
-  http_server.on("/relay_2_off", HTTP_POST, [](){
+  http_server.on("/relay/2/off", HTTP_POST, [](){
     if(!http_server.authenticate(HTTP_AUTH_USER, HTTP_AUTH_PASSWORD))
       return http_server.requestAuthentication(); 
 
@@ -195,7 +195,7 @@ void init_http_server()
   
 
   
-  http_server.on("/set_network", HTTP_POST, [](){
+  http_server.on("/set/network", HTTP_POST, [](){
     if(!http_server.authenticate(HTTP_AUTH_USER, HTTP_AUTH_PASSWORD))
       return http_server.requestAuthentication();
       
@@ -206,7 +206,7 @@ void init_http_server()
  
   });
 
-  http_server.on("/set_address", HTTP_POST, [](){
+  http_server.on("/set/address", HTTP_POST, [](){
     if(!http_server.authenticate(HTTP_AUTH_USER, HTTP_AUTH_PASSWORD))
       return http_server.requestAuthentication();
  

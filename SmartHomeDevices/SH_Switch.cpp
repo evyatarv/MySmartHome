@@ -1,8 +1,8 @@
-#include <string>
 #include <devices\switch\SH_Switch.h>
 
-const std::string CMD_REALY_OFF[SH_MAX_RELAY] = { "relay_1_off", "relay_2_off", "relay_3_off", "relay_3_off","relay_4_off" };
-const std::string CMD_REALY_ON[SH_MAX_RELAY] = { "relay_1_on", "relay_2_on", "relay_3_on", "relay_3_on", "relay_4_on" };
+const std::string CMD_ON("on");
+const std::string CMD_OFF("off");
+const std::string CMD_RELAY("relay");
 
 SH_Switch::SH_Switch()
 {
@@ -23,12 +23,13 @@ SH_Switch::SH_Switch(const char* address, size_t address_len, const void* transp
 
 SH_STATUS SH_Switch::on(SH_Context* context, SH_RELAY_INDEX relay_index)
 {	
-	if (relay_index > SH_MAX_RELAY)
+	if (relay_index >= SH_MAX_RELAY || relay_index <= 0)
 		throw new sh_not_support();
 
 	SH_STATUS status = SH_EGENERIC;
+	std::string cmd = build_switch_command(relay_index, CMD_ON); 
 
-	status = context->send(_address, _address_len, CMD_REALY_ON[relay_index].c_str(), CMD_REALY_ON[relay_index].length(), nullptr, 0, _transport_data, _transport_data_len, context->timeout);
+	status = context->send(_address, _address_len, cmd.c_str(), cmd.length(), nullptr, 0, _transport_data, _transport_data_len, context->timeout);
 	if (status == SH_SUCCESS)
 		_state = SH_SWITCH_STATE::ON;
 
@@ -37,12 +38,13 @@ SH_STATUS SH_Switch::on(SH_Context* context, SH_RELAY_INDEX relay_index)
 
 SH_STATUS SH_Switch::off(SH_Context* context, SH_RELAY_INDEX relay_index)
 {
-	if (relay_index > SH_MAX_RELAY)
+	if (relay_index >= SH_MAX_RELAY || relay_index <= 0)
 		throw new sh_not_support();
 
 	SH_STATUS status = SH_EGENERIC;
+	std::string cmd = build_switch_command(relay_index, CMD_OFF);
 
-	status = context->send(_address, _address_len, CMD_REALY_OFF[relay_index].c_str(), CMD_REALY_OFF[relay_index].length(), nullptr, 0, _transport_data, _transport_data_len, context->timeout);
+	status = context->send(_address, _address_len, cmd.c_str(), cmd.length(), nullptr, 0, _transport_data, _transport_data_len, context->timeout);
 	if (status == SH_SUCCESS)
 		_state = SH_SWITCH_STATE::OFF;
 
@@ -60,4 +62,9 @@ SH_STATUS SH_Switch::alternate(SH_Context * context)
 	if (_state == SH_SWITCH_STATE::OFF)
 		return on(context);
 	return off(context);
+}
+
+std::string SH_Switch::build_switch_command(int relay_index, std::string cmd)
+{
+	return (CMD_RELAY + "/" + std::to_string(relay_index) + "/" + cmd);
 }
