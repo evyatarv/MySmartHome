@@ -59,12 +59,12 @@ void sonoff_dual_send_relay_cmd(int cmd)
 
 void sonoff_dual_led_on()
 {
-  digitalWrite(SONOFF_SINGLE_LED, LOW);
+  digitalWrite(SONOFF_DUAL_LED, LOW);
 }
 
 void sonoff_dual_led_off()
 {
-  digitalWrite(SONOFF_SINGLE_LED, HIGH);
+  digitalWrite(SONOFF_DUAL_LED, HIGH);
 }
 
 void sonoff_dual_led(int index, int cmd)
