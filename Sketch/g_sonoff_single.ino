@@ -10,8 +10,8 @@ device_api g_sonoff_single_api;
 
 void sonoff_single_prepare_serial()
 {
-  Serial.begin(115200); 
-  delay(5000);
+  Serial.begin(UART_CONSOLE_SPEED);   //top speed for debugging the device
+  delay(SECOND);
 }
 
 void sonoff_single_led_tick()
@@ -59,7 +59,7 @@ void sonoff_single_restart()
 {
   Serial.println("PREFORMING DEVICE RESET ...");
   ESP.restart();
-  delay(1000);
+  delay(SECOND);
 }
 
 void sonoff_single_enter_err_mode()

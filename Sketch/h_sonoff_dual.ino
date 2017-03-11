@@ -1,17 +1,14 @@
 
 #define SONOFF_DUAL_LED        (13)
 
-#define SET_BIT(x, index)   (x |= 1 << index)
-#define CLEAR_BIT(x, index) (x &= ~(1 << index))
-
 device_api g_sonoff_dual_api;
 
 byte g_sonoff_dual_relay_status = 0;
 
 void sonoff_dual_prepare_serial()
 {
-  Serial.begin(19200);    //uart speed to relays micro-controller
-  delay(5000);
+  Serial.begin(UART_CONTROLER_SPEED);
+  delay(SECOND);
 }
 
 void sonoff_dual_relay(int index, int cmd)
@@ -90,7 +87,7 @@ void sonoff_dual_led_tick()
 {
   //toggle state
   int state = digitalRead(SONOFF_DUAL_LED);
-  digitalWrite(SONOFF_SINGLE_LED, !state);
+  digitalWrite(SONOFF_DUAL_LED, !state);
 }
 
 void sonoff_dual_indicate()

@@ -1,16 +1,26 @@
 
+// ============ BASE. =============
+#define HALF_SECOND   (500)
+#define SECOND        (HALF_SECOND * 2)
+// ============ BASE ENDS. ========
+
+
+
 // ============ DEVICE CONF. =============
+#define UART_CONTROLER_SPEED          (19200)   //uart speed to relays micro-controller
+#define UART_CONSOLE_SPEED            (115200)
+
 #define DEVICE_STATUS_ERR_DELAY_TIME  (100)
-#define DEVICE_ERR_MESSAGE_PULL_TIME  (1000)
+#define DEVICE_ERR_MESSAGE_PULL_TIME  (SECOND)
 #define DEVICE_RESTART_TIMEOUT        (40)
-#define DEIVCE_DELAY_AFTER_SER_WRITE  (50)
+#define DEIVCE_DELAY_AFTER_SER_WRITE  (HALF_SECOND)
 unsigned int restart_counter = 0;
 // ============= DEVICE ENDS =============
 
 
 
 // ============ WIFI CONF. ============
-#define WIFI_STATUS_PULL_INTERVAL (500)
+#define WIFI_STATUS_PULL_INTERVAL (HALF_SECOND)
 #define WIFI_CONNECTION_TIMEOUT   (120)
 #define WIFI_MAX_SSID_LENGTH      (32)
 #define WIFI_MAX_PASSWORD_LENGTH  (32)
@@ -57,6 +67,12 @@ String HTTP_RETURN_WEB_PAGE = "";
 #define EEPROM_HTTP_PASSWORD_AUTH_OFFSET    (EEPROM_HTTP_USER_AUTH_OFFSET + EEPROM_DATA_LENGTH_OFFSET + HTTP_MAX_USER_AUTH_LENGTH)
 // ============= EEPROM ENDS =============
 
+
+
+// ============ MACROS. ============
+#define SET_BIT(x, index)   (x |= 1 << index)
+#define CLEAR_BIT(x, index) (x &= ~(1 << index))
+// ============ MACROS END. ============
 
 
 
