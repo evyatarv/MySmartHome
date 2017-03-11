@@ -1,0 +1,5 @@
+Ax - Defs and utils function
+Bx - Device common code
+Cx - Features managers
+Dx - Device driver
+Ex - Device application
