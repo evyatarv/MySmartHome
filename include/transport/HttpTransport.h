@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <transport\ITransport.h>
 #include <SmartHome_err_defs.h>
-#include <SmartHome_type_defs.h>
+#include <SmartHome_common_defs.h>
 
 #define SH_MAX_USER_LENGTH		(20)
 #define SH_MAX_PASSWORD_LENGTH	(20)

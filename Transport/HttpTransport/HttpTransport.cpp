@@ -2,7 +2,7 @@
 #include <string.h>
 #include <curl\curl.h>
 #include <transport\HttpTransport.h>
-#include <SmartHome_type_defs.h>
+#include <SmartHome_common_defs.h>
 #include <SmartHome_err_defs.h>
 
 #define SH_MAX_RELM_SIZE	(SH_MAX_USER_LENGTH + SH_MAX_PASSWORD_LENGTH + 1)
