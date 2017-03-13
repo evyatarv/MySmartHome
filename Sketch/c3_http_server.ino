@@ -27,13 +27,13 @@ void set_network_configuration()
     dev_api->enter_err_mode();
 
   // save to flash
-  int len = ssid.length();
+  int len = WIFI_CURRENT_SSID_NAME.length();
   eeprom_write_buffer((const uint8_t*)&len, EEPROM_WIFI_SSID_OFFSET, EEPROM_DATA_LENGTH_OFFSET);
-  eeprom_write_buffer((const uint8_t*)ssid.c_str(), ssid.length(), EEPROM_WIFI_SSID_OFFSET + EEPROM_DATA_LENGTH_OFFSET);
+  eeprom_write_buffer((const uint8_t*)WIFI_CURRENT_SSID_NAME.c_str(), len, EEPROM_WIFI_SSID_OFFSET + EEPROM_DATA_LENGTH_OFFSET);
 
-  len = password.length();
+  len = WIFI_CURRENT_SSID_PASSWORD.length();
   eeprom_write_buffer((const uint8_t*)&len, EEPROM_DATA_LENGTH_OFFSET, EEPROM_WIFI_PASSWORD_OFFSET);
-  eeprom_write_buffer((const uint8_t*)password.c_str(), password.length(), EEPROM_WIFI_PASSWORD_OFFSET + EEPROM_DATA_LENGTH_OFFSET);
+  eeprom_write_buffer((const uint8_t*)WIFI_CURRENT_SSID_PASSWORD.c_str(), len, EEPROM_WIFI_PASSWORD_OFFSET + EEPROM_DATA_LENGTH_OFFSET);
 }
 
 bool set_device_ip()
