@@ -1,7 +1,8 @@
 
 void system_error()
 {
-  device_err();
+  if (dev_api && dev_api->do_device_could_reset)
+    dev_api->do_device_could_reset();
 }
 
 
