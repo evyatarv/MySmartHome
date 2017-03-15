@@ -4,7 +4,7 @@ bool wifi_try_connect(const char* ssid, const char* password, bool set_static_ip
   int timeout_counter = 0; 
 
   WiFi.disconnect();
-  delay(2000);
+  delay(FOUR_SEC);
   
   Serial.print("Connecteing to: ");
   Serial.println(ssid);

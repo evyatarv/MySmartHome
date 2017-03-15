@@ -106,7 +106,7 @@ void init_http_server()
   http_server.on("/", HTTP_POST, [](){
     if(!http_server.authenticate(HTTP_AUTH_USER, HTTP_AUTH_PASSWORD))
       return http_server.requestAuthentication();
-    http_server.send(200, "text/html", HTTP_RETURN_WEB_PAGE);
+    http_server.send(HTTP_RESPONSE_OK, "text/html", HTTP_RETURN_WEB_PAGE);
   });
 
   http_server.on("/relay/1/on", HTTP_POST, [](){
@@ -117,26 +117,26 @@ void init_http_server()
     {
       dev_api->relay(first_relay, relay_on);
       delay(HTTP_RESPONSE_DELAY_TIME);
-      http_server.send(200, "text/html", HTTP_RETURN_WEB_PAGE);
+      http_server.send(HTTP_RESPONSE_OK, "text/html", HTTP_RETURN_WEB_PAGE);
     }
     else
       //TODO: explore - not sure this is the right way to return error
-      http_server.send(404, "text/html", HTTP_RETURN_WEB_PAGE); 
+      http_server.send(HTTP_RESPONSE_PAGE_NOT_FOUND, "text/html", HTTP_RETURN_WEB_PAGE);
   });
   
   http_server.on("/relay/1/off", HTTP_POST, [](){
     if(!http_server.authenticate(HTTP_AUTH_USER, HTTP_AUTH_PASSWORD))
-      return http_server.requestAuthentication(); 
+      return http_server.requestAuthentication();
 
   if (dev_api && dev_api->relay)
     {
       dev_api->relay(first_relay, relay_off);
       delay(HTTP_RESPONSE_DELAY_TIME);
-      http_server.send(200, "text/html", HTTP_RETURN_WEB_PAGE);
+      http_server.send(HTTP_RESPONSE_OK, "text/html", HTTP_RETURN_WEB_PAGE);
     }
     else
       //TODO: explore - not sure this is the right way to return error
-      http_server.send(404, "text/html", HTTP_RETURN_WEB_PAGE);
+      http_server.send(HTTP_RESPONSE_PAGE_NOT_FOUND, "text/html", HTTP_RETURN_WEB_PAGE);
       
   });
 
@@ -150,26 +150,26 @@ void init_http_server()
     {
       dev_api->relay(second_relay, relay_on);
       delay(HTTP_RESPONSE_DELAY_TIME);
-      http_server.send(200, "text/html", HTTP_RETURN_WEB_PAGE);
+      http_server.send(HTTP_RESPONSE_OK, "text/html", HTTP_RETURN_WEB_PAGE);
     }
     else
       //TODO: explore - not sure this is the right way to return error
-      http_server.send(404, "text/html", HTTP_RETURN_WEB_PAGE); 
+      http_server.send(HTTP_RESPONSE_PAGE_NOT_FOUND, "text/html", HTTP_RETURN_WEB_PAGE);
   });
   
   http_server.on("/relay/2/off", HTTP_POST, [](){
     if(!http_server.authenticate(HTTP_AUTH_USER, HTTP_AUTH_PASSWORD))
-      return http_server.requestAuthentication(); 
+      return http_server.requestAuthentication();
 
   if (dev_api && dev_api->relay)
     {
       dev_api->relay(second_relay, relay_off);
       delay(HTTP_RESPONSE_DELAY_TIME);
-      http_server.send(200, "text/html", HTTP_RETURN_WEB_PAGE);
+      http_server.send(HTTP_RESPONSE_OK, "text/html", HTTP_RETURN_WEB_PAGE);
     }
     else
       //TODO: explore - not sure this is the right way to return error
-      http_server.send(404, "text/html", HTTP_RETURN_WEB_PAGE);
+      http_server.send(HTTP_RESPONSE_PAGE_NOT_FOUND, "text/html", HTTP_RETURN_WEB_PAGE);
       
   });
 
@@ -182,11 +182,11 @@ void init_http_server()
     if (!dev_api && !dev_api->do_device_could_reset)
     {
       //TODO: explore - not sure this is the right way to return error
-      http_server.send(404, "text/html", HTTP_RETURN_WEB_PAGE);
+      http_server.send(HTTP_RESPONSE_PAGE_NOT_FOUND, "text/html", HTTP_RETURN_WEB_PAGE);
       return;
     }
       
-    http_server.send(200, "text/html", HTTP_RETURN_WEB_PAGE);
+    http_server.send(HTTP_RESPONSE_OK, "text/html", HTTP_RETURN_WEB_PAGE);
     
     delay(HTTP_RESPONSE_DELAY_TIME);
     dev_api->do_device_could_reset();
@@ -194,12 +194,12 @@ void init_http_server()
   });
   
 
-  
+
   http_server.on("/set/network", HTTP_POST, [](){
     if(!http_server.authenticate(HTTP_AUTH_USER, HTTP_AUTH_PASSWORD))
       return http_server.requestAuthentication();
       
-    http_server.send(200, "text/html", HTTP_RETURN_WEB_PAGE);
+    http_server.send(HTTP_RESPONSE_OK, "text/html", HTTP_RETURN_WEB_PAGE);
     
     delay(HTTP_RESPONSE_DELAY_TIME);
     set_network_configuration();
@@ -210,7 +210,7 @@ void init_http_server()
     if(!http_server.authenticate(HTTP_AUTH_USER, HTTP_AUTH_PASSWORD))
       return http_server.requestAuthentication();
  
-    http_server.send(200, "text/html", HTTP_RETURN_WEB_PAGE);
+    http_server.send(HTTP_RESPONSE_OK, "text/html", HTTP_RETURN_WEB_PAGE);
     
     delay(HTTP_RESPONSE_DELAY_TIME);
     set_device_ip();

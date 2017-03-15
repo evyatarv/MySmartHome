@@ -2,6 +2,7 @@
 // ============ BASE. =============
 #define HALF_SECOND   (500)
 #define SECOND        (HALF_SECOND * 2)
+#define FOUR_SEC      (HALF_SECOND * 8)
 // ============ BASE ENDS. ========
 
 
@@ -45,6 +46,9 @@ IPAddress DEV_IP;
 #define HTTP_RESPONSE_DELAY_TIME      (20)
 
 String HTTP_RETURN_WEB_PAGE = "";
+
+#define HTTP_RESPONSE_OK              (200)
+#define HTTP_RESPONSE_PAGE_NOT_FOUND  (400)
 // ============= HTTP SERVER ENDS =============
 
 
