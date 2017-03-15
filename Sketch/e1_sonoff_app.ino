@@ -1,4 +1,11 @@
 
+
+
+#ifdef SWITCHS
+
+#endif
+
+#ifdef SHUTTER
 //shutter movment in sec (time)
 #define SHUTTER_SML_FULL_OPEN_CLOSE 18000
 #define SHUTTER_SML_CRACKS 2500
@@ -33,3 +40,4 @@ void shutterMove(bool upDown, int moveTime){
   delay(moveTime);
   shutterState += (moveTime * ((upDown)? 1:-1));
 }
+#endif

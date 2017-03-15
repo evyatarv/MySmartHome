@@ -1,8 +1,16 @@
 
+// ============= COMPILE CONF. =============
+#define SHUTTER 1
+//#define SWITCHS 1
+// ============= COMPILE END =============
+
+
+
 // ============ BASE. =============
 #define HALF_SECOND   (500)
 #define SECOND        (HALF_SECOND * 2)
-#define FOUR_SEC      (HALF_SECOND * 8)
+#define TWO_SEC       (SECOND * 2)
+#define FOUR_SEC      (SECOND * 4)
 // ============ BASE ENDS. ========
 
 
