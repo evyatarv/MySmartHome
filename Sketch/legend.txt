@@ -1,4 +1,5 @@
 Ax - Defs and utils function
+	a0 - user info - MUST be first (therefore it's zero) 
 Bx - Device common code
 Cx - Features managers
 Dx - Device driver
