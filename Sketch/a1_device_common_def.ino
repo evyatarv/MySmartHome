@@ -30,8 +30,6 @@ unsigned int restart_counter = 0;
 
 enum WIFI_CONF_NUM{ SSID_NAME=0, PASSWORD, GATEWAY, MASK_IP, DEVICE_IP, MAX_CONF_LEN };
 const char* WIFI_CONF[] = { "ssid", "password", "gateway", "mask_ip", "device_ip" };
-const char* WIFI_DEFAULT_SSID_NAME = "E&S-SMART_HOME";
-const char* WIFI_DEFAULT_SSID_PASSWORD = "P@ssw0rd";
 String WIFI_CURRENT_SSID_NAME = WIFI_DEFAULT_SSID_NAME;
 String WIFI_CURRENT_SSID_PASSWORD = WIFI_DEFAULT_SSID_PASSWORD;
 IPAddress DEFAULT_GATEWAY;
@@ -46,8 +44,6 @@ IPAddress DEV_IP;
 #define HTTP_MAX_PASSWORD_AUTH_LENGTH (32)
 #define HTTP_RESPONSE_DELAY_TIME      (20)
 
-const char* HTTP_AUTH_USER = "evyatar";
-const char* HTTP_AUTH_PASSWORD = "12345";
 String HTTP_RETURN_WEB_PAGE = "";
 // ============= HTTP SERVER ENDS =============
 
