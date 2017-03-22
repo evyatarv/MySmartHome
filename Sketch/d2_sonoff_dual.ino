@@ -146,7 +146,7 @@ void sonoff_dual_restart()
 {
   Serial.println("PREFORMING DEVICE RESET ...");
   ESP.restart();
-  delay(1000);
+  delay(SECOND);
 }
 
 void start_init()
