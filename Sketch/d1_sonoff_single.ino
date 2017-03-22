@@ -1,4 +1,6 @@
 
+#ifdef SONOFF_SINGLE
+
 // gpios
 #define SONOFF_SINGLE_BUTTON     (0)
 #define SONOFF_SINGLE_RELAY      (12)
@@ -113,7 +115,6 @@ void sonoff_single_indicate()
   sonoff_single_led_tick();
 }
 
-/*
 void init_device()
 {
   sonoff_single_prepare_serial();
@@ -132,4 +133,6 @@ void init_device()
   set_device_api(&g_sonoff_single_api);
   
   sonoff_single_led_on();
-}*/
+}
+
+#endif //SONOFF_SINGLE

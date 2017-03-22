@@ -1,7 +1,15 @@
 
 // ============= COMPILE CONF. =============
+//set device (only one)
+#define SONOFF_DUAL 1
+//#define SONOFF_SINGLE 1
+
+//set device app
+#ifdef SONOFF_DUAL
 #define SHUTTER 1
 //#define SWITCHS 1
+#endif //SONOFF_DUAL
+
 // ============= COMPILE END =============
 
 
@@ -93,9 +101,12 @@ enum relay_cmd
   all_relays_off,
 };
 
-enum relay_index {
-  first_relay = 0,
-  second_relay
+enum relays
+{
+  none = 0,
+  first_relay = 1,
+  second_relay,
+  both_relays,
 };
 
 enum led_cmd
