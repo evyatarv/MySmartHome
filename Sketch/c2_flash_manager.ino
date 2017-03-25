@@ -28,7 +28,8 @@ void flash_init()
   Serial.println("init EEPROM ...\n");
   Serial.println(tmp);
     
-  eeprom_write_buffer((const uint8_t*)tmp.c_str(), EEPROM_FIRST_BOOT_STR_LEN, 0);
+  eeprom_write_buffer((const uint8_t*)tmp.c_str(), EEPROM_FIRST_BOOT_STR_LEN, 0, false);
+  eeprom_write_buffer((const uint8_t*)"0", EEPROM_SIZE - EEPROM_FIRST_BOOT_STR_LEN, EEPROM_FIRST_BOOT_STR_LEN, true);   //init the buffer to zero 
 }
 
 void load_wifi_ssid_and_password()

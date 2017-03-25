@@ -28,12 +28,12 @@ void set_network_configuration()
 
   // save to flash
   int len = WIFI_CURRENT_SSID_NAME.length();
-  eeprom_write_buffer((const uint8_t*)&len, EEPROM_WIFI_SSID_OFFSET, EEPROM_DATA_LENGTH_OFFSET);
-  eeprom_write_buffer((const uint8_t*)WIFI_CURRENT_SSID_NAME.c_str(), len, EEPROM_WIFI_SSID_OFFSET + EEPROM_DATA_LENGTH_OFFSET);
+  eeprom_write_buffer((const uint8_t*)&len, EEPROM_WIFI_SSID_OFFSET, EEPROM_DATA_LENGTH_OFFSET, false);
+  eeprom_write_buffer((const uint8_t*)WIFI_CURRENT_SSID_NAME.c_str(), len, EEPROM_WIFI_SSID_OFFSET + EEPROM_DATA_LENGTH_OFFSET, false);
 
   len = WIFI_CURRENT_SSID_PASSWORD.length();
-  eeprom_write_buffer((const uint8_t*)&len, EEPROM_DATA_LENGTH_OFFSET, EEPROM_WIFI_PASSWORD_OFFSET);
-  eeprom_write_buffer((const uint8_t*)WIFI_CURRENT_SSID_PASSWORD.c_str(), len, EEPROM_WIFI_PASSWORD_OFFSET + EEPROM_DATA_LENGTH_OFFSET);
+  eeprom_write_buffer((const uint8_t*)&len, EEPROM_DATA_LENGTH_OFFSET, EEPROM_WIFI_PASSWORD_OFFSET,false);
+  eeprom_write_buffer((const uint8_t*)WIFI_CURRENT_SSID_PASSWORD.c_str(), len, EEPROM_WIFI_PASSWORD_OFFSET + EEPROM_DATA_LENGTH_OFFSET, false);
 }
 
 bool set_device_ip()
@@ -83,17 +83,17 @@ bool set_device_ip()
       uint8_t len = WIFI_IPV4_RAW_DATA_LENGTH;
       
       // save to flash
-      eeprom_write_buffer(&len, EEPROM_DATA_LENGTH_OFFSET, EEPROM_WIFI_DEVICE_IP_OFFSET);      
+      eeprom_write_buffer(&len, EEPROM_DATA_LENGTH_OFFSET, EEPROM_WIFI_DEVICE_IP_OFFSET, false);      
       tmp_ip = (uint32_t)DEV_IP;
-      eeprom_write_buffer((const uint8_t*)&tmp_ip, WIFI_IPV4_RAW_DATA_LENGTH, EEPROM_WIFI_DEVICE_IP_OFFSET + EEPROM_DATA_LENGTH_OFFSET);
+      eeprom_write_buffer((const uint8_t*)&tmp_ip, WIFI_IPV4_RAW_DATA_LENGTH, EEPROM_WIFI_DEVICE_IP_OFFSET + EEPROM_DATA_LENGTH_OFFSET, false);
 
-      eeprom_write_buffer(&len, EEPROM_DATA_LENGTH_OFFSET, EEPROM_WIFI_SUBMASK_OFFSET);
+      eeprom_write_buffer(&len, EEPROM_DATA_LENGTH_OFFSET, EEPROM_WIFI_SUBMASK_OFFSET, false);
       tmp_ip = (uint32_t)SUB_MASK_IP;
-      eeprom_write_buffer((const uint8_t*)&tmp_ip, WIFI_IPV4_RAW_DATA_LENGTH, EEPROM_WIFI_SUBMASK_OFFSET + EEPROM_DATA_LENGTH_OFFSET);
+      eeprom_write_buffer((const uint8_t*)&tmp_ip, WIFI_IPV4_RAW_DATA_LENGTH, EEPROM_WIFI_SUBMASK_OFFSET + EEPROM_DATA_LENGTH_OFFSET, false);
 
-      eeprom_write_buffer(&len, EEPROM_DATA_LENGTH_OFFSET, EEPROM_WIFI_DEFUALT_GATEWAY_OFFSET);
+      eeprom_write_buffer(&len, EEPROM_DATA_LENGTH_OFFSET, EEPROM_WIFI_DEFUALT_GATEWAY_OFFSET, false);
       tmp_ip = (uint32_t)DEFAULT_GATEWAY;
-      eeprom_write_buffer((const uint8_t*)&tmp_ip, WIFI_IPV4_RAW_DATA_LENGTH, EEPROM_WIFI_DEFUALT_GATEWAY_OFFSET + EEPROM_DATA_LENGTH_OFFSET);
+      eeprom_write_buffer((const uint8_t*)&tmp_ip, WIFI_IPV4_RAW_DATA_LENGTH, EEPROM_WIFI_DEFUALT_GATEWAY_OFFSET + EEPROM_DATA_LENGTH_OFFSET, false);
     }
   }
   while(false);

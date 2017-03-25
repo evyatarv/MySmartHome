@@ -45,7 +45,7 @@ void sonoff_dual_relay(int index, int cmd)
 
 void init_device()
 {
-  start_init();
+  init_dual_drv();
 
   g_max_time = SHUTTER_SML_FULL_OPEN_CLOSE;
   
@@ -53,7 +53,6 @@ void init_device()
   g_sonoff_dual_api.do_device_could_reset = sonoff_dual_restart;
   g_sonoff_dual_api.do_indicate = sonoff_dual_indicate;
   g_sonoff_dual_api.led = sonoff_dual_led;
-  
-  end_init();
+
 }
  #endif

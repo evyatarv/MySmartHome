@@ -49,23 +49,29 @@ void hexDump (void *addr, int len, int r_size) {
     Serial.println();
 }
 
-void eeprom_read_buffer(uint8_t* buff, int len, int addr_offset)
+void eeprom_read_buffer(uint8_t* dest_buff, int len, int addr_offset)
 {
-  if (!buff || len < 0 || addr_offset < 0)
+  if (!dest_buff || len < 0 || addr_offset < 0)
     return;
   
   for(int i=0; i < len ; i++)
-    buff[i] = EEPROM.read(addr_offset+i);
+    dest_buff[i] = EEPROM.read(addr_offset+i);
 }
 
-void eeprom_write_buffer(const uint8_t* buff, int len, int addr_offset)
+void eeprom_write_buffer(const uint8_t* src_buff, int len, int addr_offset, bool pattrn)
 {
-  if (!buff || len < 0 || addr_offset < 0)
+  uint8_t data;
+  
+  if (!src_buff || len < 0 || addr_offset < 0)
     return;
-    
-  for(int i=0; i < len ; i++)
-    EEPROM.write(addr_offset+i, buff[i]);
 
+  data = src_buff[0];
+  for(int i=0; i < len ; i++){
+    if (!pattrn)
+      data = src_buff[i];    
+    EEPROM.write(addr_offset+i, data);
+  }
+  
   EEPROM.commit();
 }
 

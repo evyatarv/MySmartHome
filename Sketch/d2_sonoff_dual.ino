@@ -149,24 +149,19 @@ void sonoff_dual_restart()
   delay(SECOND);
 }
 
-void start_init()
+void init_dual_drv()
 {
+  g_sonoff_dual_status = none;
+
+  set_device_api(&g_sonoff_dual_api);
+  
   sonoff_dual_prepare_serial();
   sonoff_dual_prepare_gpios();
   Serial.println("INIT SONOFF DUAL");
   
-  g_sonoff_dual_api.init = sonoff_dual_prepare_gpios;
-
-}
-
-void end_init()
-{
-  g_sonoff_dual_status = none;
-  
-  set_device_api(&g_sonoff_dual_api);
-  
   sonoff_dual_led_on();
 }
+
 
 //================ Device Driver function - public - END =============
 
