@@ -9,18 +9,14 @@ SH_Switch::SH_Switch()
 {
 	_address = nullptr;
 	_address_len = 0;
-	_transport_data = nullptr;
-	_transport_data_len = 0;
 	_state = 0;
 	_num_of_relays = SH_ZERO_RELAYS;
 }
 
-SH_Switch::SH_Switch(uint8_t num_of_relays, const char* address, size_t address_len, const void* transport_data, size_t transport_data_len): SH_Switch()
+SH_Switch::SH_Switch(uint8_t num_of_relays, const char* address, size_t address_len): SH_Switch()
 {
 	_address = address;
 	_address_len = address_len;
-	_transport_data = transport_data;
-	_transport_data_len = transport_data_len;
 
 	if (num_of_relays >= SH_MAX_RELAY)
 		throw new sh_not_support();
@@ -36,7 +32,7 @@ SH_STATUS SH_Switch::on(SH_Context* context, SH_RELAY_INDEX relay_index)
 	SH_STATUS status = SH_EGENERIC;
 	std::string cmd = build_switch_command(relay_index, CMD_ON); 
 
-	status = context->send(_address, _address_len, cmd.c_str(), cmd.length(), nullptr, 0, _transport_data, _transport_data_len, context->timeout);
+	status = context->send(_address, _address_len, cmd.c_str(), cmd.length(), nullptr, 0, context->transport_data, context->transport_data_len, context->timeout);
 	if (status == SH_SUCCESS)
 		SH_SET_BIT(_state, relay_index);
 
@@ -51,7 +47,7 @@ SH_STATUS SH_Switch::off(SH_Context* context, SH_RELAY_INDEX relay_index)
 	SH_STATUS status = SH_EGENERIC;
 	std::string cmd = build_switch_command(relay_index, CMD_OFF);
 
-	status = context->send(_address, _address_len, cmd.c_str(), cmd.length(), nullptr, 0, _transport_data, _transport_data_len, context->timeout);
+	status = context->send(_address, _address_len, cmd.c_str(), cmd.length(), nullptr, 0, context->transport_data, context->transport_data_len, context->timeout);
 	if (status == SH_SUCCESS)
 		SH_CLEAR_BIT(_state, relay_index);
 

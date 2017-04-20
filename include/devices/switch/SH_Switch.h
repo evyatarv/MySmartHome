@@ -13,7 +13,7 @@ class SH_Switch : ISH_Switch
 {
 public:
 	SH_Switch();
-	SH_Switch(uint8_t num_of_relayes, const char* address, size_t address_len, const void* transport_data, size_t transport_data_len);
+	SH_Switch(uint8_t num_of_relayes, const char* address, size_t address_len);
 
 	// Inherited via ISwitch
 	virtual SH_STATUS on(SH_Context* context, SH_RELAY_INDEX relay_index = SH_FIRST_RELAY) override;
