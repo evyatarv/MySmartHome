@@ -75,20 +75,16 @@ void sonoff_dual_set_state(byte relay, bool set_on)
   sonoff_dual_send_relay_cmd();
 }
 
-#ifndef SHUTTER
-
 void sonoff_dual_set_all(bool to_on)
 {
   if ((to_on && g_sonoff_dual_status == both_relays) ||
       (!to_on && g_sonoff_dual_status == none))
         return; //noting to do
 
-  g_sonoff_dual_status = (to_on?) both_relays : none;
+  g_sonoff_dual_status = (to_on)? both_relays : none;
 
   sonoff_dual_send_relay_cmd();
 }
-
-#endif
 
 byte get_sonoff_dual_state()
 {

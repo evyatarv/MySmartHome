@@ -6,8 +6,7 @@ bool wifi_try_connect(const char* ssid, const char* password, bool set_static_ip
   WiFi.disconnect();
   delay(FOUR_SEC);
   
-  Serial.print("Connecteing to: ");
-  Serial.println(ssid);
+  PRINT_I("Connecteing to: %s\n", ssid);
 
   // start wifi
   WiFi.begin(ssid, password); 
@@ -26,14 +25,14 @@ bool wifi_try_connect(const char* ssid, const char* password, bool set_static_ip
       return false;
     }
 
-    Serial.print(".");
+    PRINT_I("%s", ".");
     dev_api->do_indicate();
   }
 
   // print wifi connection data
-  Serial.println("");
-  Serial.print("IP address: ");
-  Serial.println(WiFi.localIP());
+  PRINT_I("\nIP address: ");
+  PRINT_V(WiFi.localIP());
+
 
   // save latest success connection
   WIFI_CURRENT_SSID_NAME = ssid;
@@ -49,21 +48,17 @@ bool wifi_connect(const char* ssid, const char* password, bool set_static_ip)
 {
   // Set ESP to stasion mode
   WiFi.mode(WIFI_STA);
-  Serial.println("WIFI mode set to stasion.");
+  PRINT_I("%s\n", "WIFI mode set to stasion.");
   
   if (wifi_try_connect(ssid, password, set_static_ip))
     return true; 
      
-  Serial.print("Fail to connect: ");
-  Serial.println(ssid);
-  Serial.println("Try connecting previous ssid");
+  PRINT_I("Fail to connect: %s \n Try connecting previous ssid\n", ssid);
 
   if (wifi_try_connect(WIFI_CURRENT_SSID_NAME.c_str(), WIFI_CURRENT_SSID_PASSWORD.c_str(), set_static_ip))
     return true;
 
-  Serial.print("Fail to connect: ");
-  Serial.println(ssid);
-  Serial.println("Try connecting default ssid");
+  PRINT_I("Fail to connect: %s\n Try connecting default ssid\n", ssid);
 
   if (wifi_try_connect(WIFI_DEFAULT_SSID_NAME, WIFI_DEFAULT_SSID_PASSWORD, set_static_ip))
     return true;

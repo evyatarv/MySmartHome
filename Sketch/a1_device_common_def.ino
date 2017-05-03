@@ -10,6 +10,28 @@
 //#define SWITCHS 1
 #endif //SONOFF_DUAL
 
+//#define DEBUG   1
+//#define INFO    1
+
+#ifdef DEBUG
+#define PRINT_D    Serial.printf
+#else
+#define PRINT_D(...)
+#endif
+
+#ifdef INFO
+#define PRINT_I    Serial.printf
+#else
+#define PRINT_I(...)
+#endif
+
+#if (INFO) || (DEBUG)
+#define PRINT_V Serial.print
+#else
+#define PRINT_V(...)
+#endif
+
+
 // ============= COMPILE END =============
 
 
@@ -90,7 +112,6 @@ String HTTP_RETURN_WEB_PAGE = "";
 #define EEPROM_HTTP_PASSWORD_AUTH_OFFSET        (EEPROM_HTTP_USER_AUTH_OFFSET + EEPROM_DATA_LENGTH_OFFSET + HTTP_MAX_USER_AUTH_LENGTH)
 #define EEPROM_SHUTTER_FULL_DURATION_OFFSET     (EEPROM_HTTP_PASSWORD_AUTH_OFFSET + EEPROM_DATA_LENGTH_OFFSET + SHUTTER_FULL_DURATION_LENGTH)
 #define EEPROM_SHUTTER_CRACKS_DURATION_OFFSET   (EEPROM_SHUTTER_FULL_DURATION_OFFSET + EEPROM_DATA_LENGTH_OFFSET +  SHUTTER_CRACKS_DURATION_LENGTH)
-
 // ============= EEPROM ENDS =============
 
 
@@ -136,7 +157,7 @@ enum led_index {
   second_led
 };
 
-void device_func_place_holder(){Serial.println("FUNC PLACE HOLDER :( ");}
+void device_func_place_holder(){PRINT_I("%s", "FUNC PLACE HOLDER :( \n");}
 
 typedef void (*device_relay)(int index, int cmd);
 
