@@ -9,8 +9,7 @@ void set_network_configuration()
   if (conf.length() && conf.length() <= WIFI_MAX_SSID_LENGTH)
   {
     ssid = conf;
-    Serial.print("SSID set to: ");
-    Serial.println(ssid);
+    PRINT_I("SSID set to: %s\n", ssid.c_str());
   }
   else
     return;
@@ -19,8 +18,7 @@ void set_network_configuration()
   if (conf.length() && conf.length() <= WIFI_MAX_PASSWORD_LENGTH)
   {
     password = conf;
-    Serial.print("PASSWORD set to: ");
-    Serial.println(password);
+    PRINT_D("PASSWORD set to: %s\n", password.c_str());
   }
 
   if (!wifi_connect(ssid.c_str(), password.c_str(), false))
@@ -48,8 +46,8 @@ bool set_device_ip()
           conf.length() < WIFI_MAX_IPV4_STR_LENGTH)
     {
       DEV_IP.fromString(conf);
-      Serial.print("DEVICE IP set to: ");
-      Serial.println(DEV_IP);
+      PRINT_I("DEVICE IP set to: ");
+      PRINT_V(DEV_IP);
     }
     else
       break;
@@ -59,8 +57,8 @@ bool set_device_ip()
           conf.length() < WIFI_MAX_IPV4_STR_LENGTH)
     {
       SUB_MASK_IP.fromString(conf);
-      Serial.print("MUSK IP set to: ");
-      Serial.println(SUB_MASK_IP);
+      PRINT_I("MUSK IP set to: ");
+      PRINT_V(SUB_MASK_IP);
     }
     else
       break;
@@ -70,8 +68,8 @@ bool set_device_ip()
           conf.length() < WIFI_MAX_IPV4_STR_LENGTH)
     {
       DEFAULT_GATEWAY.fromString(conf);
-      Serial.print("GATEWAY IP set to: ");
-      Serial.println(DEFAULT_GATEWAY);
+      PRINT_I("GATEWAY IP set to: ");
+      PRINT_V(DEFAULT_GATEWAY);
     }
     else
       break;
@@ -234,7 +232,7 @@ void init_http_server()
   });
 
   http_server.begin();
-  Serial.println("HTTP server started");
+  PRINT_I("%s\n","HTTP server started");
 }
 
 
