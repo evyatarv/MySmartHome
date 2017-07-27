@@ -19,7 +19,7 @@ SH_Switch::SH_Switch(uint8_t num_of_relays, const char* address, size_t address_
 	_address_len = address_len;
 
 	if (num_of_relays >= SH_MAX_RELAY)
-		throw new sh_not_support();
+		throw new sh_not_support_exception();
 
 	_num_of_relays = num_of_relays;
 }

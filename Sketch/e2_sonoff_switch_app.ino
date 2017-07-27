@@ -13,10 +13,11 @@ void sonoff_dual_relay(int index, int cmd)
   else if (cmd == relay_off)
     CLEAR_BIT(relay_tmp_status, index);
   else
-    PRINT_D("%s\n", "SONOFF DUAL WRONG COMMAND");
+    Serial.println("SONOFF DUAL WRONG COMMAND");
 
   // DEBUG - remove
-  PRINT_I("SONOFF DUAL COMMAND: %d\n", relay_tmp_status);
+  Serial.print("SONOFF DUAL COMMAND: ");
+  Serial.println(relay_tmp_status);
   
   //DO NOT change or remove this check!
   //this is to make sure that both relays will NOT be activate together at all times (even if the enum has changed)

@@ -5,11 +5,11 @@ void hexDump (void *addr, int len, int r_size) {
     unsigned char *pc = (unsigned char*)addr;
 
     if (len == 0) {
-        PRINT_D("%s", "  ZERO LENGTH\n");
+        Serial.printf("  ZERO LENGTH\n");
         return;
     }
     if (len < 0) {
-        PRINT_D("  NEGATIVE LENGTH: %i\n",len);
+        Serial.printf("  NEGATIVE LENGTH: %i\n",len);
         return;
     }
     Serial.println();
@@ -20,14 +20,15 @@ void hexDump (void *addr, int len, int r_size) {
             // Just don't print ASCII for the zeroth line.
             if (i != 0)
             {
-                PRINT_D("  %s\n", buff);
+                Serial.printf ("  %s", buff);
+                Serial.println();
             }
             // Output the offset.
-            PRINT_D("  %04x ", i);
+            Serial.printf ("  %04x ", i);
         }
 
         // Now the hex code for the specific character.
-        PRINT_D(" %02x", pc[i]);
+        Serial.printf (" %02x", pc[i]);
 
         // And store a printable ASCII character for later.
         if ((pc[i] < 0x20) || (pc[i] > 0x7e))
@@ -39,12 +40,13 @@ void hexDump (void *addr, int len, int r_size) {
 
     // Pad out last line if not exactly 16 characters.
     while ((i % 16) != 0) {
-        PRINT_D("s", "   ");
+        Serial.printf ("   ");
         i++;
     }
 
     // And print the final ASCII bit.
-    PRINT_D("  %s\n\n", buff);
+    Serial.printf ("  %s\n", buff);
+    Serial.println();
 }
 
 void eeprom_read_buffer(uint8_t* dest_buff, int len, int addr_offset)

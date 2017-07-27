@@ -25,7 +25,8 @@ bool flash_is_initialize(bool to_init)
 void flash_init()
 {
   String tmp = (const char*)EEPROM_FIRST_BOOT_STR;
-  PRINT_I("init EEPROM ...\n\n%s\n", tmp.c_str());
+  Serial.println("init EEPROM ...\n");
+  Serial.println(tmp);
     
   eeprom_write_buffer((const uint8_t*)tmp.c_str(), EEPROM_FIRST_BOOT_STR_LEN, 0, false);
   eeprom_write_buffer((const uint8_t*)"0", EEPROM_SIZE - EEPROM_FIRST_BOOT_STR_LEN, EEPROM_FIRST_BOOT_STR_LEN, true);   //init the buffer to zero 

@@ -20,7 +20,7 @@ namespace SH_TelegramBot
 
         private static string authName = "evyatar";
         private static string autPass = "12345";
-        private static string address = "XXXXXXXXX";
+        private static string address = "10.12.231.14";
         private static IntPtr context = SH_Unmanaged.CreateContext(0, -1, authName, authName.Length, autPass, autPass.Length);
         private static IntPtr sh_switch = SH_Unmanaged.CreateSwitch(2, address, address.Length);
 
