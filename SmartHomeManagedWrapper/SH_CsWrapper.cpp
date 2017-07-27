@@ -1,4 +1,3 @@
-
 #include <internal\SH_CsWrapper.h>
 #include <transport\HttpTransport.h>
 

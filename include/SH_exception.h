@@ -9,4 +9,6 @@ class sh_invalid_params_exception : public std::exception {};
 
 class sh_not_support_exception : public std::exception {};
 
+class sh_wrong_time_format_exception : public std::exception {};
+
 #endif

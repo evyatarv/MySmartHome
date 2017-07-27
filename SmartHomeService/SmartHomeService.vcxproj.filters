@@ -21,5 +21,22 @@
     <ClInclude Include="..\include\SH_exception.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\service\SH_Scheduler_task.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\service\SH_Threads.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\service\SH_Scheduler_time.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="SH_Threads.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\service\SH_Scheduler_time.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
