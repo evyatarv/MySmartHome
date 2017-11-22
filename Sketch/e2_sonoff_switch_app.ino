@@ -28,8 +28,8 @@ void sonoff_dual_relay(int index, int cmd)
    * first close the relays to be on the safe 
    * side that the will not be activate together 
    */
-    sonoff_dual_send_relay_cmd(0);              
-    sonoff_dual_send_relay_cmd(g_sonoff_dual_relay_status);
+    sonoff_dual_set_all(0);              
+    sonoff_dual_set_state(relay_tmp_status, true);
 
     g_sonoff_dual_relay_status = relay_tmp_status;
   }
@@ -47,7 +47,7 @@ void init_device()
 {
   init_dual_drv();
 
-  g_max_time = SHUTTER_SML_FULL_OPEN_CLOSE;
+  //g_max_time = SHUTTER_SML_FULL_OPEN_CLOSE;
   
   g_sonoff_dual_api.relay = sonoff_dual_relay; 
   g_sonoff_dual_api.do_device_could_reset = sonoff_dual_restart;

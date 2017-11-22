@@ -6,8 +6,8 @@
 
 //set device app
 #ifdef SONOFF_DUAL
-#define SHUTTER 1
-//#define SWITCHS 1
+//#define SHUTTER 1
+#define SWITCHS 1
 #endif //SONOFF_DUAL
 
 // ============= COMPILE END =============
@@ -117,8 +117,7 @@ enum relay_cmd
 
 enum relays
 {
-  none = 0,
-  first_relay = 1,
+  first_relay = 0,
   second_relay,
   both_relays,
 };

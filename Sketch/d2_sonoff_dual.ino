@@ -5,7 +5,7 @@
 
 //globals vars
 device_api g_sonoff_dual_api;
-relays g_sonoff_dual_status = none;    //if init is not to zero, you need to move the delay in "sonoff_dual_send_relay_cmd" to the start of the function
+int g_sonoff_dual_status = 0;    //if init is not to zero, you need to move the delay in "sonoff_dual_send_relay_cmd" to the start of the function
 
 
 //================ Device Driver function - private ===================
@@ -80,10 +80,17 @@ void sonoff_dual_set_state(byte relay, bool set_on)
 void sonoff_dual_set_all(bool to_on)
 {
   if ((to_on && g_sonoff_dual_status == both_relays) ||
-      (!to_on && g_sonoff_dual_status == none))
+      (!to_on && g_sonoff_dual_status == 0))
         return; //noting to do
 
-  g_sonoff_dual_status = (to_on?) both_relays : none;
+  if (to_on)
+  {
+    g_sonoff_dual_status = both_relays;
+  }
+  else
+  {
+    g_sonoff_dual_status = 0;
+  }
 
   sonoff_dual_send_relay_cmd();
 }
@@ -151,13 +158,14 @@ void sonoff_dual_restart()
 
 void init_dual_drv()
 {
-  g_sonoff_dual_status = none;
-
   set_device_api(&g_sonoff_dual_api);
   
   sonoff_dual_prepare_serial();
   sonoff_dual_prepare_gpios();
   Serial.println("INIT SONOFF DUAL");
+
+  g_sonoff_dual_status = 0;
+  sonoff_dual_send_relay_cmd();
   
   sonoff_dual_led_on();
 }
